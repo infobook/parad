@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="windows-1251"?>
+<Session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Code>0</Code>
+  <Title>New Session (v3)</Title>
+  <Note />
+  <DBConnection>Provider=SQLOLEDB;
+SERVER=192.168.70.140;
+DataBase=KB;
+Integrated Security=SSPI;
+Persist Security Info=false;
+</DBConnection>
+  <ParamBegDelim>#?</ParamBegDelim>
+  <ParamEndDelim>?#</ParamEndDelim>
+  <Hash />
+  <ImagePath />
+  <ImageName />
+  <Params />
+  <Queries>
+    <Query>
+      <Code>10</Code>
+      <Name>AdrObj</Name>
+      <DateCreate>2016-10-25T16:06:33.5183436+03:00</DateCreate>
+      <DateLastModified>2016-10-27T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author />
+      <Note />
+      <Text>SELECT top 50000 
+     [CODE]
+ /*
+ Классификационный код адресного объекта отражает иерархию его 
+ подчиненности и выделяет его среди объектов данного уровня, 
+ подчиненных одному и тому же старшему объекту. 
+ Классификационный код любого адресного объекта, 
+ начиная от регионов и заканчивая элементом улично-дорожной 
+ сети представляется в следующем виде:
+	СС+РРР+ГГГ+ППП+СССС+УУУУ+ДДДД(или ЗЗЗЗ)+ОООО
+*/ 
+     ,[REGIONCODE] 	-- СС – код субъекта Российской Федерации  – региона
+     ,[AREACODE]	-- РРР – код района
+     ,[CITYCODE]	-- ГГГ – код города
+     ,[PLACECODE]	-- ППП - код населенного пункта 
+--	 ,[PLANCODE] 	-- СССС - код элемента планировочной структуры
+     ,[CTARCODE]	-- код внутригородского района
+     ,[STREETCODE]	-- УУУУ - код улицы
+     ,[EXTRCODE]	-- ДДДД (или ЗЗЗЗ). (код дополнительного адресообразующего элемента)  
+					-- ДДДД  тип и номер здания, сооружения, объекта незавершенного строительства в случае адресации домов. 
+					-- ЗЗЗЗ - номер земельного участка в случае адресации земельных участков;
+     ,[SEXTCODE]	-- ОООО - тип и номер помещения в пределах здания, сооружения 
+					--     (код подчиненного дополнительного адресообразующего элемента)
+/*
+Таким образом, каждому уровню классификации соответствует фасет кода. 
+Для объектов классификации верхних уровней фасеты кода объектов нижних 
+уровней будут иметь нулевые значения. В случае подчинённости адресного 
+объекта старшему объекту через несколько уровней иерархии фасеты кода объектов, 
+соответствующих промежуточным уровням, должны быть нулевыми. 
+Например, улица может быть привязана непосредственно к субъекту Российской Федерации 
+(для городов Москва и Санкт-Петербург), при этом фасеты кода, соответствующие уровням 
+округов, районов, городов и населенных пунктов, будут содержать нули.
+*/	 
+     ,[AUTOCODE]	-- Код автономии
+     
+     ,[SHORTNAME]
+     ,[FORMALNAME]
+--     ,[OFFNAME]
+     
+    ,CASE [AOLEVEL] -- уровни адресных объектов:
+		WHEN 1 THEN 'уровень региона'
+		WHEN 2 THEN 'уровень автономного округа (устаревшее)'
+		WHEN 3 THEN 'уровень района'
+		WHEN 35 THEN 'уровень городских и сельских поселений'
+		WHEN 4 THEN 'уровень города'
+		WHEN 5 THEN 'уровень внутригородской территории (устаревшее)'
+		WHEN 6 THEN 'уровень населенного пункта'
+		WHEN 65 THEN 'планировочная структура'
+		WHEN 7 THEN 'уровень улицы'
+		WHEN 75 THEN 'земельный участок'
+		WHEN 8 THEN 'здания, сооружения, объекта незавершенного строительства'
+		WHEN 9 THEN 'уровень помещения в пределах здания, сооружения'
+		WHEN 90 THEN 'уровень дополнительных территорий (устаревшее)'
+		WHEN 91 THEN 'уровень объектов на дополнительных территориях (устаревшее)'
+	END AS [AOLEVEL_TXT]
+    ,[CENTSTATUS] 	-- Статус центра
+	,CASE [LIVESTATUS]	-- Статус актуальности адресного объекта ФИАС на текущую дату:
+		WHEN 0 THEN 'Не актуальный'
+		WHEN 1 THEN 'Актуальный'
+	END AS [LIVESTATUS_TXT]
+	, CASE [ACTSTATUS] -- Статус последней исторической записи в жизненном цикле адресного объекта:
+		WHEN 0 THEN 'Не последняя'
+		WHEN 1 THEN 'Последняя'
+		ELSE '???'
+	END AS [ACTSTATUS_TXT]
+    ,[CURRSTATUS] 	-- Статус актуальности КЛАДР 4 (последние две цифры в коде)
+    ,[OPERSTATUS] 	-- Статус действия над записью – причина 
+
+	,[STARTDATE]	-- Начало действия записи
+    ,[ENDDATE]		-- Окончание действия записи
+	  
+ --     ,[IFNSFL]
+ --     ,[IFNSUL]
+ --     ,[NEXTID]
+--      ,[OKATO]
+--      ,[OKTMO]
+
+      ,[AOGUID]
+--      ,[AOID]
+ --     ,[PARENTGUID]
+
+ --     ,[PLAINCODE]
+ --     ,[POSTALCODE]
+ --     ,[PREVID]
+ --     ,[STARTDATE]
+ --     ,[TERRIFNSFL]
+ --     ,[TERRIFNSUL]
+ --     ,[UPDATEDATE]
+ --     ,[LIVESTATUS]
+ --     ,[NORMDOC]
+FROM 
+	[FIAS].[ADDROBJ]
+WHERE
+	[PARENTGUID] = '#?pRegID?#'
+#?pLStatus?#	
+
+	--[ACTSTATUS] = 0
+--	[AOLEVEL] = 1 
+--  [FORMALNAME] LIKE 'Маршала Жукова'
+--	AND [FORMALNAME] LIKE 'Москва'
+--
+ORDER BY 
+--	[REGIONCODE]
+	[FORMALNAME]
+
+--SELECT COUNT(*) FROM [FIAS].[ADDROBJ]
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>2</Number>
+          <Title>Актуальность на текущую дату</Title>
+          <Name>pLStatus</Name>
+          <Type>StrSelectList</Type>
+          <Inset>true</Inset>
+          <CurrentValue>:ВСЕ</CurrentValue>
+          <DefaultValue />
+          <SelectValue>~ВСЕ
+AND [LIVESTATUS] = 1~Актуальный
+AND [LIVESTATUS] = 0~Не актуальный
+</SelectValue>
+        </Param>
+        <Param>
+          <Number>10</Number>
+          <Title>Регион-предок</Title>
+          <Name>pRegID</Name>
+          <Type>StrSelectTree</Type>
+          <Inset>true</Inset>
+          <CurrentValue>0c5b2444-70a0-4932-980c-b4dc0d3f02b5:г. Москва</CurrentValue>
+          <DefaultValue />
+          <SelectValue>_ownerID s
+;
+SELECT 
+	[AOGUID], 
+	[SHORTNAME] + '. ' + [FORMALNAME],
+	1,
+	[AOGUID]
+FROM 
+	[FIAS].[ADDROBJ]
+WHERE
+	[PARENTGUID] = ''
+#?pLStatus?#
+ORDER BY 
+	[PLAINCODE]
+;
+SELECT 
+	[AOGUID], 
+	[SHORTNAME] + '. ' + [FORMALNAME],
+	1,
+	[AOGUID]
+FROM 
+	[FIAS].[ADDROBJ]
+WHERE
+	[PARENTGUID] = #?_ownerID?#
+#?pLStatus?#
+	</SelectValue>
+        </Param>
+      </Params>
+    </Query>
+    <Query>
+      <Code>105</Code>
+      <Name>SELECT_LEVEL1</Name>
+      <DateCreate>2016-10-25T16:06:43.0734085+03:00</DateCreate>
+      <DateLastModified>2016-10-28T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+	[AOGUID]
+	,[SHORTNAME]
+    ,[FORMALNAME]
+	,[ACTSTATUS]
+    ,[LIVESTATUS]
+
+FROM
+	[FIAS].[ADDROBJ]
+WHERE
+	[AOLEVEL] = 1 
+ORDER BY 
+	[FORMALNAME]</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
+    </Query>
+    <Query>
+      <Code>45</Code>
+      <Name>SOCRBASE</Name>
+      <DateCreate>2016-10-28T13:53:21.8727506+03:00</DateCreate>
+      <DateLastModified>2016-10-28T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>
+
+SELECT 
+	* 
+FROM 
+	[FIAS].[SOCRBASE]
+
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
+    </Query>
+  </Queries>
+</Session>
