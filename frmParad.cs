@@ -11,23 +11,48 @@ using CommandAS.QueryLib;
 
 namespace parad
 {
-    public partial class frmParad : Form
+  public partial class frmParad : Form
+  {
+    private Performer _qs;
+    private FIAS _fias;
+    private ParAd _pa;
+
+    public frmParad()
     {
-        private Performer _qs;
-        private FIAS _fias;
+      InitializeComponent();
 
-        public frmParad()
-        {
-            InitializeComponent();
+      _lblSrc.Text = Properties.Resources.lblSrc;
+      _lblTgt.Text = Properties.Resources.lblTgt;
 
-
-        }
-
-        private void _init()
-        {
-            _qs = new Performer();
-            _fias = new FIAS(_qs);
-
-        }
+      _init();
+      _initTT();
     }
+
+    private void _init()
+    {
+      _qs = new Performer();
+      _fias = new FIAS(_qs);
+      _pa = new ParAd(_fias);
+    }
+
+    private void _initTT()
+    {
+      _dgvTgt.Columns.Clear();
+      _dgvTgt.AutoGenerateColumns = false;
+      _dgvTgt.DataSource = _pa.pArrPaItems;
+
+      DataGridViewTextBoxColumn _dgvcText = new DataGridViewTextBoxColumn();
+      _dgvcText.Name = "itemTitle";
+      _dgvcText.DataPropertyName = "pItemTitle";
+      _dgvcText.HeaderText = "Defined item";
+      _dgvTgt.Columns.Add(_dgvcText);
+
+    }
+
+    private void _cmdParser_Click(object sender, EventArgs e)
+    {
+      _pa.pSourceText = _txtSrc.Text;
+      _pa.StepOne_Characters();
+    }
+  }
 }

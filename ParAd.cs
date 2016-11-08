@@ -29,6 +29,42 @@ namespace parad
     public StringBuilder pItem {get; set;}
 
     /// <summary>
+    /// Get item title.
+    /// </summary>
+    public String pItemTitle
+    {
+      get 
+      {
+        
+        if (pItem != null)
+        {
+          return pItem.ToString();
+        }
+        else if (pIsDelim)
+        {
+          switch (pDelim)
+          {
+            case Delim.Bracket:
+              return "bracket";
+            case Delim.Comma:
+              return "comma";
+            case Delim.No:
+              return "No";
+            case Delim.Point:
+              return "point";
+            case Delim.WhiteSpase:
+              return "whitespase";
+            case Delim.Undefine:
+            default:
+              return "delim undefined!";
+          }
+        }
+        else
+          return "null";
+      }
+    }
+
+    /// <summary>
     /// This is word - letter only!
     /// </summary>
     public bool pIsWord {get; set;}
@@ -173,7 +209,7 @@ namespace parad
     private String _src;
     private ArrayList _pai;
 
-    private Performer _qs;
+    private FIAS _fi;
 
     public String pSourceText
     {
@@ -187,9 +223,14 @@ namespace parad
       }
     }
 
-    public ParAd(Performer aQS)
+    public ArrayList pArrPaItems
     {
-      _qs = aQS;
+      get { return _pai; }
+    }
+
+    public ParAd(FIAS aFIAS)
+    {
+      _fi = aFIAS;
       _pai = new ArrayList();
     }
 
@@ -202,37 +243,43 @@ namespace parad
       return new paItem();
     }
 
+    private StringBuilder _replaceLat2Cyr(StringBuilder aSB)
+    {
+      StringBuilder wsb = aSB.Replace('a', 'а');
+      wsb = wsb.Replace('A', 'А');
+      wsb = wsb.Replace('x', 'х');
+      wsb = wsb.Replace('X', 'Х');
+      wsb = wsb.Replace('e', 'е');
+      wsb = wsb.Replace('E', 'Е');
+      wsb = wsb.Replace('c', 'с');
+      wsb = wsb.Replace('C', 'С');
+      wsb = wsb.Replace('t', 'т');
+      wsb = wsb.Replace('T', 'Т');
+      wsb = wsb.Replace('b', 'в');
+      wsb = wsb.Replace('B', 'В');
+      wsb = wsb.Replace('h', 'н');
+      wsb = wsb.Replace('H', 'Н');
+      wsb = wsb.Replace('m', 'м');
+      wsb = wsb.Replace('M', 'М');
+      wsb = wsb.Replace('k', 'к');
+      wsb = wsb.Replace('K', 'К');
+      wsb = wsb.Replace('o', 'о');
+      wsb = wsb.Replace('O', 'О');
+      wsb = wsb.Replace('p', 'р');
+      wsb = wsb.Replace('P', 'Р');
+
+      return wsb;
+    }
+
     public void StepOne_Characters()
     {
       StringBuilder wsb = new StringBuilder(_src.Trim()); //.ToLower());
 
-      #region Replace Lat -> Cyr
-      ///          Lat  Cyr 
-      wsb.Replace('a', 'а');
-      wsb.Replace('A', 'А');
-      wsb.Replace('x', 'х');
-      wsb.Replace('X', 'Х');
-      wsb.Replace('e', 'е');
-      wsb.Replace('E', 'Е');
-      wsb.Replace('c', 'с');
-      wsb.Replace('C', 'С');
-      wsb.Replace('t', 'т');
-      wsb.Replace('T', 'Т');
-      wsb.Replace('b', 'в');
-      wsb.Replace('B', 'В');
-      wsb.Replace('h', 'н');
-      wsb.Replace('H', 'Н');
-      wsb.Replace('m', 'м');
-      wsb.Replace('M', 'М');
-      wsb.Replace('k', 'к');
-      wsb.Replace('K', 'К');
-      wsb.Replace('o', 'о');
-      wsb.Replace('O', 'О');
-      wsb.Replace('p', 'р');
-      wsb.Replace('P', 'Р');
-      #endregion
+      wsb = _replaceLat2Cyr(wsb);
 
       paItem pa = new paItem();
+
+      _pai.Clear();
 
       for (int ii = 0; ii < wsb.Length; ii++)
       {
