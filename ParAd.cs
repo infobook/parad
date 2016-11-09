@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.ComponentModel;
 using CommandAS.QueryLib;
 
 namespace parad
@@ -11,7 +12,7 @@ namespace parad
   /// <summary>
   /// 
   /// </summary>
-  public class paItem
+  public class paItem : INotifyPropertyChanged
   {
     public enum Delim
     {
@@ -183,6 +184,7 @@ namespace parad
         pIsWord = true;
       }
 
+      OnPropertyChanged("pItemTitle");
     }
 
     public void AppendNextDigit(char aChar)
@@ -201,8 +203,16 @@ namespace parad
       {
         pIsDigit = true;
       }
+      OnPropertyChanged("pItemTitle");
     }
-}
+
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged(string propertyName)
+    {
+      if (PropertyChanged != null)
+        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    }
+  }
 
   public class ParAd
   {
@@ -289,7 +299,8 @@ namespace parad
           /// "г. Москва" - space skip
           /// "д. 10, кв. 11" -spaces skip
           /// "one      tow" - skip more then one space
-          if (_pai.Count > 0 && ((paItem)_pai[_pai.Count-1]).pIsDelim)
+          //if (_pai.Count > 0 && ((paItem)_pai[_pai.Count-1]).pIsDelim)
+          if (pa.pIsDelim)
             continue;  // if previous is whitespace skip this
 
           pa = _addDelimAndNextPAItem(pa, paItem.Delim.WhiteSpase);
@@ -332,6 +343,10 @@ namespace parad
 
         }
       }
+
+      /// add last item if this not empty
+      if (!pa.pIsEmpty)
+        _pai.Add(pa);
     }
   }
 

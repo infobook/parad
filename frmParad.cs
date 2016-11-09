@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using CommandAS.QueryLib;
 
 namespace parad
@@ -49,10 +50,24 @@ namespace parad
 
     }
 
+    private void _log(string aTxt)
+    {
+      _txtLogs.Text += Environment.NewLine + "[" + DateTime.Now + "] " + aTxt;
+    }
+
     private void _cmdParser_Click(object sender, EventArgs e)
     {
       _pa.pSourceText = _txtSrc.Text;
       _pa.StepOne_Characters();
+      //_dgvTgt.Refresh();
+      _dgvTgt.Invalidate();
+      _log("finished parser");
+    }
+
+    public const string REG_APP_PATH = "";
+    private void SaveParameterToRegister()
+    {
+      RegistryKey regKey = Registry.CurrentUser.OpenSubKey(REG_APP_PATH);
     }
   }
 }
