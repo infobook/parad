@@ -39,6 +39,8 @@
       this._lblSrc = new System.Windows.Forms.Label();
       this._lblTgt = new System.Windows.Forms.Label();
       this._txtSrc = new System.Windows.Forms.TextBox();
+      this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+      this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
       this._ts.SuspendLayout();
       this._tlp.SuspendLayout();
       ((System.ComponentModel.ISupportInitialize)(this._sc)).BeginInit();
@@ -51,7 +53,9 @@
       // _ts
       // 
       this._ts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this._cmdParser});
+            this._cmdParser,
+            this.toolStripSeparator1,
+            this.toolStripButton1});
       this._ts.Location = new System.Drawing.Point(0, 0);
       this._ts.Name = "_ts";
       this._ts.Size = new System.Drawing.Size(562, 25);
@@ -161,6 +165,22 @@
       this._txtSrc.Size = new System.Drawing.Size(356, 20);
       this._txtSrc.TabIndex = 3;
       // 
+      // toolStripSeparator1
+      // 
+      this.toolStripSeparator1.Name = "toolStripSeparator1";
+      this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+      // 
+      // toolStripButton1
+      // 
+      this.toolStripButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+      this.toolStripButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton1.Image")));
+      this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+      this.toolStripButton1.Name = "toolStripButton1";
+      this.toolStripButton1.Size = new System.Drawing.Size(23, 22);
+      this.toolStripButton1.Text = "Exit";
+      this.toolStripButton1.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
+      this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+      // 
       // frmParad
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -199,6 +219,8 @@
         private System.Windows.Forms.Label _lblSrc;
         private System.Windows.Forms.Label _lblTgt;
         private System.Windows.Forms.TextBox _txtSrc;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripButton toolStripButton1;
     }
 }
 

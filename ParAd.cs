@@ -299,8 +299,8 @@ namespace parad
           /// "г. Москва" - space skip
           /// "д. 10, кв. 11" -spaces skip
           /// "one      tow" - skip more then one space
-          //if (_pai.Count > 0 && ((paItem)_pai[_pai.Count-1]).pIsDelim)
-          if (pa.pIsDelim)
+          if (_pai.Count > 0 && ((paItem)_pai[_pai.Count-1]).pIsDelim)
+          //if (pa.pIsDelim)
             continue;  // if previous is whitespace skip this
 
           pa = _addDelimAndNextPAItem(pa, paItem.Delim.WhiteSpase);

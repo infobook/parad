@@ -85,6 +85,10 @@
       <Project>{98e2edee-8aab-4727-8ccf-3cec4d7debb5}</Project>
       <Name>QueryLib-v12</Name>
     </ProjectReference>
+    <ProjectReference Include="..\tools4\Tools4-v12.csproj">
+      <Project>{7181f026-de87-4463-99b9-0021e586cec1}</Project>
+      <Name>Tools4-v12</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\EG2_icon_7.png" />
