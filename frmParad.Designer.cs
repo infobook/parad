@@ -1,4 +1,4 @@
-﻿namespace parad
+﻿namespace ProgTor.ParAd
 {
     partial class frmParad
     {
@@ -65,7 +65,7 @@
       // _cmdParser
       // 
       this._cmdParser.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-      this._cmdParser.Image = global::parad.Properties.Resources.navigate_down;
+      this._cmdParser.Image = global::ProgTor.ParAd.Properties.Resources.navigate_down;
       this._cmdParser.ImageTransparentColor = System.Drawing.Color.Magenta;
       this._cmdParser.Name = "_cmdParser";
       this._cmdParser.Size = new System.Drawing.Size(23, 22);

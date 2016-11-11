@@ -2,13 +2,17 @@
 <Session xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Code>0</Code>
   <Title>New Session (v3)</Title>
-  <Note />
-  <DBConnection>Provider=SQLOLEDB;
+  <Note>Provider=SQLOLEDB;
 SERVER=192.168.70.140;
 DataBase=KB;
 Integrated Security=SSPI;
 Persist Security Info=false;
-</DBConnection>
+
+</Note>
+  <DBConnection>Provider=Microsoft.ACE.OLEDB.12.0;
+Data Source="C:\data\FIAS\fias20161020";
+Extended Properties=dBase IV;
+User ID=Admin;</DBConnection>
   <ParamBegDelim>#?</ParamBegDelim>
   <ParamEndDelim>?#</ParamEndDelim>
   <Hash />
@@ -188,7 +192,7 @@ WHERE
       <Code>105</Code>
       <Name>SELECT_LEVEL1</Name>
       <DateCreate>2016-10-25T16:06:43.0734085+03:00</DateCreate>
-      <DateLastModified>2016-10-28T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-11T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -211,23 +215,39 @@ ORDER BY
     </Query>
     <Query>
       <Code>45</Code>
-      <Name>SOCRBASE</Name>
-      <DateCreate>2016-10-28T13:53:21.8727506+03:00</DateCreate>
-      <DateLastModified>2016-10-28T00:00:00+03:00</DateLastModified>
+      <Name>Socrbase</Name>
+      <DateCreate>2016-11-03T13:43:20.9161679+03:00</DateCreate>
+      <DateLastModified>2016-11-11T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
-      <Text>
-
-SELECT 
-	* 
+      <Text>SELECT 
+	[LEVEL] AS [cLevel]
+	, SOCRNAME AS [cName]
+	, SCNAME AS [cSName]
+	, KOD_T_ST AS [cCode]
 FROM 
-	[FIAS].[SOCRBASE]
-
-</Text>
+	SOCRBASE
+#?OREDR_BY?#</Text>
       <XSLT />
       <ImageName />
-      <Params />
+      <Params>
+        <Param>
+          <Number>5</Number>
+          <Title>Сортировать по</Title>
+          <Name>OREDR_BY</Name>
+          <Type>StrSelectList</Type>
+          <Inset>true</Inset>
+          <CurrentValue>ORDER BY SCNAME:SCNAME</CurrentValue>
+          <DefaultValue />
+          <SelectValue>~&lt;без сортировки&gt;
+ORDER BY LEVEL~LEVEL
+ORDER BY SOCRNAME~SOCRNAME
+ORDER BY SCNAME~SCNAME
+ORDER BY KOD_T_ST~KOD_T_ST
+</SelectValue>
+        </Param>
+      </Params>
     </Query>
   </Queries>
 </Session>

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 using System.ComponentModel;
 using CommandAS.QueryLib;
 
-namespace parad
+namespace ProgTor.ParAd
 {
   /// <summary>
   /// 
   /// </summary>
-  public class paItem : INotifyPropertyChanged
+  public class paItem // : INotifyPropertyChanged
   {
     public enum Delim
     {
@@ -43,28 +43,62 @@ namespace parad
         }
         else if (pIsDelim)
         {
-          switch (pDelim)
-          {
-            case Delim.Bracket:
-              return "bracket";
-            case Delim.Comma:
-              return "comma";
-            case Delim.No:
-              return "No";
-            case Delim.Point:
-              return "point";
-            case Delim.WhiteSpase:
-              return "whitespase";
-            case Delim.Undefine:
-            default:
-              return "delim undefined!";
-          }
+          return "     --->";
         }
         else
           return "null";
       }
     }
-
+    /// <summary>
+    /// Get item property
+    /// </summary>
+    public String pItemProperty
+    {
+      get
+      {
+        if (pIsAbr)
+        {
+          return "ABR";
+        }
+        else if (pIsInsideSlash)
+        {
+          return "insede slash";
+        }
+        else if (pIsWordWithUpperInside)
+        {
+          return "word with up inside";
+        }
+        else if (pIsLetterDigit)
+        {
+          return "letter & digit";
+        }
+        else if (pIsIndex)
+        {
+          return "index";
+        }
+        else if (pIsDelim)
+        {
+          switch (pDelim)
+          {
+            case Delim.Bracket:
+              return "{bracket}";
+            case Delim.Comma:
+              return "{comma}";
+            case Delim.No:
+              return "{No}";
+            case Delim.Point:
+              return "{point}";
+            case Delim.WhiteSpase:
+              return "{whitespase}";
+            case Delim.Undefine:
+            default:
+              return "{delim undefined!}";
+          }
+        }
+        else
+          return string.Empty;
+      }
+    }
     /// <summary>
     /// This is word - letter only!
     /// </summary>
@@ -132,6 +166,18 @@ namespace parad
       }
     }
 
+    /// <summary>
+    /// Is this item index?
+    /// </summary>
+    public bool pIsIndex
+    {
+      get { return pIsDigit && pItem.Length == 6; }
+    }
+
+    /// <summary>
+    /// Is skip this word?
+    /// </summary>
+    public bool pIsSkipIt { get; set; }
 
     public paItem()
     {
@@ -142,6 +188,7 @@ namespace parad
       pIsLetterDigit = false;
       pIsWordWithUpperInside = false;
       pIsInsideSlash = false;
+      pIsSkipIt = false;
       _isAbr = false;
       pAbrCodeR = 0;
 
@@ -184,7 +231,7 @@ namespace parad
         pIsWord = true;
       }
 
-      OnPropertyChanged("pItemTitle");
+      //OnPropertyChanged("pItemTitle");
     }
 
     public void AppendNextDigit(char aChar)
@@ -203,15 +250,15 @@ namespace parad
       {
         pIsDigit = true;
       }
-      OnPropertyChanged("pItemTitle");
+      //OnPropertyChanged("pItemTitle");
     }
 
-    public event PropertyChangedEventHandler PropertyChanged;
-    protected void OnPropertyChanged(string propertyName)
-    {
-      if (PropertyChanged != null)
-        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    }
+    //public event PropertyChangedEventHandler PropertyChanged;
+    //protected void OnPropertyChanged(string propertyName)
+    //{
+    //  if (PropertyChanged != null)
+    //    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+    //}
   }
 
   public class ParAd
@@ -220,6 +267,7 @@ namespace parad
     private ArrayList _pai;
 
     private FIAS _fi;
+    private Experience _exp;
 
     public String pSourceText
     {
@@ -238,16 +286,20 @@ namespace parad
       get { return _pai; }
     }
 
-    public ParAd(FIAS aFIAS)
+    public ParAd(FIAS aFIAS, Experience aExp)
     {
       _fi = aFIAS;
+      _exp = aExp;
       _pai = new ArrayList();
     }
 
     private paItem _addDelimAndNextPAItem(paItem aPAI, paItem.Delim aDelim)
     {
-      _pai.Add(aPAI);
-      aPAI = new paItem();
+      if (!aPAI.pIsEmpty)
+      {
+        _pai.Add(aPAI);
+        aPAI = new paItem();
+      }
       aPAI.pDelim = aDelim;
       _pai.Add(aPAI);
       return new paItem();
@@ -281,6 +333,39 @@ namespace parad
       return wsb;
     }
 
+    public void Run()
+    {
+      StepOne_Characters();
+
+      foreach (paItem pa in _pai)
+      {
+        if (pa.pIsWord)
+        {
+          if (_exp.IsSkipWord(pa.pItem.ToString()))
+          { // skip it if it in the experience !!!
+            pa.pIsSkipIt = true;
+          }
+          else if (pa.pItem.Length > 3)
+          { // check if word like this AAAAAA - skip it !!!
+            char[] ca = pa.pItem.ToString().ToCharArray();
+            pa.pIsSkipIt = true;
+            for (int ii = 1; ii < ca.Length; ii++)
+            {
+              if (ca[ii] != ca[ii - 1])
+              {
+                pa.pIsSkipIt = false;
+                break;
+              }
+            }
+
+          }
+        }
+
+      }
+
+      StepTwo_FIAS();
+    }
+
     public void StepOne_Characters()
     {
       StringBuilder wsb = new StringBuilder(_src.Trim()); //.ToLower());
@@ -293,8 +378,13 @@ namespace parad
 
       for (int ii = 0; ii < wsb.Length; ii++)
       {
-        if (char.IsWhiteSpace(wsb[ii]))
+        if (char.IsWhiteSpace(wsb[ii]) || wsb[ii] == ';' || wsb[ii] == ':')
         {
+          if (!pa.pIsEmpty)
+          { 
+            _pai.Add(pa);
+            pa = new paItem();
+          }
           /// skip such combination:
           /// "г. Москва" - space skip
           /// "д. 10, кв. 11" -spaces skip
@@ -303,7 +393,9 @@ namespace parad
           //if (pa.pIsDelim)
             continue;  // if previous is whitespace skip this
 
-          pa = _addDelimAndNextPAItem(pa, paItem.Delim.WhiteSpase);
+          pa.pDelim = paItem.Delim.WhiteSpase;
+          _pai.Add(pa);
+          pa = new paItem();
         }
         else if (wsb[ii] == '.')
         {
@@ -333,7 +425,7 @@ namespace parad
         {
           pa.AppendNextDigit(wsb[ii]);
         }
-        else if (wsb[ii] == '/')
+        else if (wsb[ii] == '/' || wsb[ii] == '\\')
         {
           pa.pItem.Append(wsb[ii]);
           pa.pIsInsideSlash = true;
@@ -347,6 +439,21 @@ namespace parad
       /// add last item if this not empty
       if (!pa.pIsEmpty)
         _pai.Add(pa);
+    }
+
+    public void StepTwo_FIAS()
+    {
+      foreach (paItem pa in _pai)
+      {
+        if (pa.pIsSkipIt)
+          continue;
+
+        if (pa.pIsWord)
+        {
+
+        }
+      }
+
     }
   }
 

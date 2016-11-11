@@ -7,10 +7,11 @@
     <ProjectGuid>{492FAAE2-1605-4ABB-8DA2-284ADCC0D7DB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>parad</RootNamespace>
-    <AssemblyName>parad</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>ProgTor.ParAd</RootNamespace>
+    <AssemblyName>ParAd</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -44,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Experience.cs" />
     <Compile Include="FIAS.cs" />
     <Compile Include="frmParad.cs">
       <SubType>Form</SubType>

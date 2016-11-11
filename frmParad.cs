@@ -11,7 +11,7 @@ using Microsoft.Win32;
 using CommandAS.Tools;
 using CommandAS.QueryLib;
 
-namespace parad
+namespace ProgTor.ParAd
 {
   public partial class frmParad : Form
   {
@@ -19,6 +19,7 @@ namespace parad
     
     private Performer _qs;
     private FIAS _fias;
+    private Experience _exp;
     private ParAd _pa;
 
     public frmParad()
@@ -56,7 +57,9 @@ namespace parad
     {
       _qs = new Performer();
       _fias = new FIAS(_qs);
-      _pa = new ParAd(_fias);
+      _exp = new Experience();
+      _pa = new ParAd(_fias, _exp);
+
     }
 
     private void _initTT()
@@ -67,8 +70,15 @@ namespace parad
       DataGridViewTextBoxColumn _dgvcText = new DataGridViewTextBoxColumn();
       _dgvcText.Name = "itemTitle";
       _dgvcText.DataPropertyName = "pItemTitle";
-      _dgvcText.HeaderText = "Defined item";
+      _dgvcText.HeaderText = "Item";
       _dgvTgt.Columns.Add(_dgvcText);
+
+      _dgvcText = new DataGridViewTextBoxColumn();
+      _dgvcText.Name = "itemProperty";
+      _dgvcText.DataPropertyName = "pItemProperty";
+      _dgvcText.HeaderText = "Property";
+      _dgvTgt.Columns.Add(_dgvcText);
+
 
     }
 
@@ -90,7 +100,7 @@ namespace parad
       _dgvTgt.DataSource = null;
 
       _pa.pSourceText = _txtSrc.Text;
-      _pa.StepOne_Characters();
+      _pa.Run();
 
       _log("\t in array _pa count = " + _pa.pArrPaItems.Count);
 
@@ -121,19 +131,21 @@ namespace parad
         }
       }
       catch { }
+
+      regKey.Close();
     }
+
     private void SaveParameterToRegister()
     {
-      RegistryKey regKey = Registry.CurrentUser.OpenSubKey(REG_APP_PATH);
-      if (regKey == null)
-        regKey = Registry.CurrentUser.CreateSubKey(REG_APP_PATH);
-      //CASToolsReg.SaveSizeLocationForm(regKey, this);
-      regKey.SetValue("FormSize", this.Size.Width + "|" + this.Size.Height);
-      regKey.SetValue("FormLocation", this.Location.X + "|" + this.Location.Y);
+      //RegistryKey regKey = Registry.CurrentUser.OpenSubKey(REG_APP_PATH);
+      //if (regKey == null)
+      RegistryKey  regKey = Registry.CurrentUser.CreateSubKey(REG_APP_PATH);
+      CASToolsReg.SaveSizeLocationForm(regKey, this);
 
       regKey.SetValue("SourceText", _txtSrc.Text);
       regKey.SetValue("SplitePosition", _sc.SplitterDistance);
 
+      regKey.Close();
     }
 
     private void toolStripButton1_Click(object sender, EventArgs e)
