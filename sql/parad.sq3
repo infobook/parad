@@ -24,7 +24,7 @@ User ID=Admin;</DBConnection>
       <Code>10</Code>
       <Name>AdrObj</Name>
       <DateCreate>2016-10-25T16:06:33.5183436+03:00</DateCreate>
-      <DateLastModified>2016-10-27T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author />
       <Note />
@@ -119,9 +119,10 @@ User ID=Admin;</DBConnection>
  --     ,[LIVESTATUS]
  --     ,[NORMDOC]
 FROM 
-	[FIAS].[ADDROBJ]
+	[ADDROBJ]
 WHERE
-	[PARENTGUID] = '#?pRegID?#'
+	[PARENTGUID] =  '61723327-1c20-42fe-8dfa-402638d9b396' -- '#pRegID#'
+	
 #?pLStatus?#	
 
 	--[ACTSTATUS] = 0
@@ -144,7 +145,7 @@ ORDER BY
           <Name>pLStatus</Name>
           <Type>StrSelectList</Type>
           <Inset>true</Inset>
-          <CurrentValue>:ВСЕ</CurrentValue>
+          <CurrentValue>AND [LIVESTATUS] = 1:Актуальный</CurrentValue>
           <DefaultValue />
           <SelectValue>~ВСЕ
 AND [LIVESTATUS] = 1~Актуальный
@@ -157,7 +158,7 @@ AND [LIVESTATUS] = 0~Не актуальный
           <Name>pRegID</Name>
           <Type>StrSelectTree</Type>
           <Inset>true</Inset>
-          <CurrentValue>0c5b2444-70a0-4932-980c-b4dc0d3f02b5:г. Москва</CurrentValue>
+          <CurrentValue>61723327-1c20-42fe-8dfa-402638d9b396:обл. Тверская</CurrentValue>
           <DefaultValue />
           <SelectValue>_ownerID s
 ;
@@ -167,9 +168,9 @@ SELECT
 	1,
 	[AOGUID]
 FROM 
-	[FIAS].[ADDROBJ]
+	[ADDROBJ]
 WHERE
-	[PARENTGUID] = ''
+	[PARENTGUID] is null
 #?pLStatus?#
 ORDER BY 
 	[PLAINCODE]
@@ -180,35 +181,177 @@ SELECT
 	1,
 	[AOGUID]
 FROM 
-	[FIAS].[ADDROBJ]
+	[ADDROBJ]
 WHERE
 	[PARENTGUID] = #?_ownerID?#
 #?pLStatus?#
-	</SelectValue>
+ORDER BY
+	[FORMALNAME]	</SelectValue>
         </Param>
       </Params>
+    </Query>
+    <Query>
+      <Code>0</Code>
+      <Name>AdrObjNC</Name>
+      <DateCreate>2016-10-25T16:06:33.5183436+03:00</DateCreate>
+      <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author />
+      <Note />
+      <Text>SELECT top 50000 
+     [CODE]
+
+     ,[REGIONCODE] 
+     ,[AREACODE]	
+     ,[CITYCODE]	
+     ,[PLACECODE]	 
+	 ,[PLAINCODE]
+     ,[CTARCODE]	
+     ,[STREETCODE]	
+     ,[EXTRCODE]	
+     ,[SEXTCODE]
+ 
+     ,[AUTOCODE]
+     
+     ,[SHORTNAME]
+     ,[FORMALNAME]
+     
+    ,[CENTSTATUS] 
+    ,[CURRSTATUS]
+    ,[OPERSTATUS] 
+
+	,[STARTDATE]
+    ,[ENDDATE]
+	  
+    ,[AOGUID]
+	
+FROM 
+	[ADDROBJ]
+WHERE
+	[PARENTGUID] =  '#?pRegID?#'
+	
+#?pLStatus?#	
+	
+ORDER BY 
+	[FORMALNAME]
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>2</Number>
+          <Title>Актуальность на текущую дату</Title>
+          <Name>pLStatus</Name>
+          <Type>StrSelectList</Type>
+          <Inset>true</Inset>
+          <CurrentValue>AND [LIVESTATUS] = 1:Актуальный</CurrentValue>
+          <DefaultValue />
+          <SelectValue>~ВСЕ
+AND [LIVESTATUS] = 1~Актуальный
+AND [LIVESTATUS] = 0~Не актуальный
+</SelectValue>
+        </Param>
+        <Param>
+          <Number>10</Number>
+          <Title>Регион-предок</Title>
+          <Name>pRegID</Name>
+          <Type>StrSelectTree</Type>
+          <Inset>true</Inset>
+          <CurrentValue>:</CurrentValue>
+          <DefaultValue />
+          <SelectValue>_ownerID s
+;
+SELECT 
+	[AOGUID], 
+	[SHORTNAME] + '. ' + [FORMALNAME],
+	1,
+	[AOGUID]
+FROM 
+	[ADDROBJ]
+WHERE
+	[PARENTGUID] is null
+#?pLStatus?#
+ORDER BY 
+	[PLAINCODE]
+;
+SELECT 
+	[AOGUID], 
+	[SHORTNAME] + '. ' + [FORMALNAME],
+	1,
+	[AOGUID]
+FROM 
+	[ADDROBJ]
+WHERE
+	[PARENTGUID] = #?_ownerID?#
+#?pLStatus?#
+ORDER BY
+	[FORMALNAME]	</SelectValue>
+        </Param>
+      </Params>
+    </Query>
+    <Query>
+      <Code>107</Code>
+      <Name>SELECT_LEVEL_GR_1</Name>
+      <DateCreate>2016-11-14T17:49:42.4988337+03:00</DateCreate>
+      <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+	[AOGUID] AS [aGUID]
+	,[SHORTNAME]  AS [aSName]
+    ,[FORMALNAME] AS [aFName]
+	,[ACTSTATUS]  AS [aStatus]
+	,[AOLEVEL] AS [aLevel]
+	
+     ,[REGIONCODE] AS [aRegCode] 
+     ,[AREACODE] AS [aAreaCode]	
+     ,[CITYCODE] AS [aCityCode]	
+     ,[PLACECODE] AS [aPlaceCode]	 
+	 ,[PLAINCODE] AS [aPlainCode]
+     ,[STREETCODE] AS [aStreetCode]	
+
+     ,[CTARCODE]	
+     ,[EXTRCODE]	
+     ,[SEXTCODE]
+
+FROM
+	[ADDROBJ]
+WHERE
+	[LIVESTATUS] = 1
+	AND [AOLEVEL] in (3,4)
+	AND [REGIONCODE] = '69'
+ORDER BY 
+	[FORMALNAME]</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
     </Query>
     <Query>
       <Code>105</Code>
       <Name>SELECT_LEVEL1</Name>
       <DateCreate>2016-10-25T16:06:43.0734085+03:00</DateCreate>
-      <DateLastModified>2016-11-11T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
-      <Text>SELECT
-	[AOGUID]
-	,[SHORTNAME]
-    ,[FORMALNAME]
-	,[ACTSTATUS]
-    ,[LIVESTATUS]
-
+      <Text>
+SELECT
+	[AOGUID] AS [cGUID]
+	,[REGIONCODE] AS [cRegCode]
+	,[SHORTNAME]  AS [cSName]
+    ,[FORMALNAME] AS [cFName]
+	,[ACTSTATUS] AS [cStatus]
+	,[LIVESTATUS] AS [cLive]
+	,[AOLEVEL] AS [cLevel]
+	,0 AS [cIsLoadNext]
 FROM
-	[FIAS].[ADDROBJ]
+	[ADDROBJ]
 WHERE
-	[AOLEVEL] = 1 
+	[PARENTGUID] is null	
 ORDER BY 
-	[FORMALNAME]</Text>
+	[FORMALNAME]
+</Text>
       <XSLT />
       <ImageName />
       <Params />
@@ -217,17 +360,23 @@ ORDER BY
       <Code>45</Code>
       <Name>Socrbase</Name>
       <DateCreate>2016-11-03T13:43:20.9161679+03:00</DateCreate>
-      <DateLastModified>2016-11-11T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-18T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
-      <Text>SELECT 
-	[LEVEL] AS [cLevel]
+      <Text>
+
+SELECT 
+	CInt([LEVEL]) AS [cLvl]
+	, [LEVEL] AS [cLevel]
 	, SOCRNAME AS [cName]
 	, SCNAME AS [cSName]
-	, KOD_T_ST AS [cCode]
+	, CInt(KOD_T_ST) AS [cCode]
+	, '' AS cSName2
 FROM 
 	SOCRBASE
+WHERE 
+	SCNAME IS NOT NULL
 #?OREDR_BY?#</Text>
       <XSLT />
       <ImageName />
@@ -238,16 +387,39 @@ FROM
           <Name>OREDR_BY</Name>
           <Type>StrSelectList</Type>
           <Inset>true</Inset>
-          <CurrentValue>ORDER BY SCNAME:SCNAME</CurrentValue>
+          <CurrentValue>:&lt;без сортировки&gt;</CurrentValue>
           <DefaultValue />
           <SelectValue>~&lt;без сортировки&gt;
-ORDER BY LEVEL~LEVEL
+ORDER BY [LEVEL]~LEVEL
 ORDER BY SOCRNAME~SOCRNAME
 ORDER BY SCNAME~SCNAME
 ORDER BY KOD_T_ST~KOD_T_ST
+ORDER BY SOCRNAME, [LEVEL]~SOCRNAME, LEVEL
 </SelectValue>
         </Param>
       </Params>
+    </Query>
+    <Query>
+      <Code>0</Code>
+      <Name>----TEST-ADROBJ</Name>
+      <DateCreate>2016-11-14T09:40:05.5293693+03:00</DateCreate>
+      <DateLastModified>2016-11-14T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author />
+      <Note />
+      <Text>SELECT 
+	[AOGUID], 
+	[SHORTNAME] + '. ' + [FORMALNAME],
+	1,
+	[AOGUID]
+FROM 
+	[ADDROBJ]
+WHERE
+	[PARENTGUID] is null
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
     </Query>
   </Queries>
 </Session>

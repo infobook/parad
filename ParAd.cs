@@ -179,6 +179,11 @@ namespace ProgTor.ParAd
     /// </summary>
     public bool pIsSkipIt { get; set; }
 
+    /// <summary>
+    /// Reference to the FIAS item.
+    /// </summary>
+    public fItem pFiasItem { get; set; }
+
     public paItem()
     {
       pItem = new StringBuilder();
@@ -193,6 +198,8 @@ namespace ProgTor.ParAd
       pAbrCodeR = 0;
 
       _delim = Delim.Undefine;
+
+      pFiasItem = null;
     }
 
     public void AppendNextLetter(char aChar)
@@ -443,6 +450,8 @@ namespace ProgTor.ParAd
 
     public void StepTwo_FIAS()
     {
+      int lvl = 0;
+      //int code = 0;
       foreach (paItem pa in _pai)
       {
         if (pa.pIsSkipIt)
@@ -450,7 +459,8 @@ namespace ProgTor.ParAd
 
         if (pa.pIsWord)
         {
-
+          pa.pAbrCodeR = _fi.IsSorcbase(pa.pItem.ToString(), ref lvl);
+ 
         }
       }
 

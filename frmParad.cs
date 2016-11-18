@@ -29,12 +29,12 @@ namespace ProgTor.ParAd
       _lblSrc.Text = Properties.Resources.lblSrc;
       _lblTgt.Text = Properties.Resources.lblTgt;
 
-      _init();
-      _initTT();
 
       this.Load += frmParad_Load;
       //this.FormClosing += frmParad_FormClosing;
       //this.FormClosed += frmParad_FormClosed;
+
+      _initTT();
     }
 
     //void frmParad_FormClosed(object sender, FormClosedEventArgs e)
@@ -55,11 +55,23 @@ namespace ProgTor.ParAd
 
     private void _init()
     {
+      _log("beginig initialize program"+Environment.NewLine+"\t Please, waiting...");
       _qs = new Performer();
       _fias = new FIAS(_qs);
+      if (_fias.LoadSession(@"T:\CASNet4\ParAd\sql\parad.sq3"))
+      {
+        _qs.pWDB.pConnectionString = _qs.pSes.DBConnection;
+        if (_qs.pWDB.ConnectionOpen())
+          _fias.LoadAll();
+        else
+          _log(_qs.pError.description);
+      }
+      else
+        _log(@"Err: Load session - T:\CASNet4\ParAd\sql\parad.sq3");
       _exp = new Experience();
       _pa = new ParAd(_fias, _exp);
 
+      _log("finished initialize program");
     }
 
     private void _initTT()
@@ -92,6 +104,9 @@ namespace ProgTor.ParAd
         _txtLogs.Text += Environment.NewLine;
       else
         _txtLogs.Text += Environment.NewLine + "[" + DateTime.Now + "] " + aTxt;
+
+      _txtLogs.Invalidate();
+      this.Refresh();
     }
 
     private void _cmdParser_Click(object sender, EventArgs e)
@@ -152,6 +167,13 @@ namespace ProgTor.ParAd
     {
       SaveParameterToRegister();
       Close();
+    }
+
+    private void _cmdInit_Click(object sender, EventArgs e)
+    {
+
+      _init();
+
     }
   }
 }

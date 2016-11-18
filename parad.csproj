@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Experience.cs" />
     <Compile Include="FIAS.cs" />
+    <Compile Include="fItem.cs" />
     <Compile Include="frmParad.cs">
       <SubType>Form</SubType>
     </Compile>
