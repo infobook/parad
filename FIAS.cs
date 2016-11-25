@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,8 @@ namespace ProgTor.ParAd
     private DataTable _socrbase;
     private DataTable _reg;
 
+    private ArrayList _arrFI;
+
     public DataTable SocrBase
     {
         get { return _socrbase; }
@@ -34,9 +37,15 @@ namespace ProgTor.ParAd
       get { return _reg; }
     }
 
+    public ArrayList pArrFiasItems
+    {
+      get { return _arrFI; }
+    }
+
     public FIAS(Performer aQS)
     {
         _qs = aQS;
+        _arrFI = new ArrayList();
 
     }
 
@@ -55,22 +64,22 @@ namespace ProgTor.ParAd
     /// </summary>
     /// <param name="aSrc"></param>
     /// <returns></returns>
-    public int IsSorcbase(String aSrc, ref int aLevelGrThen )
+    public fiBase FindInSorcbase(String aSrc, short aLevelGrThen )
     {
       if (_socrbase.Rows.Count > 0)
       {
         //String lvl = aLevelGrThen.ToString();
-        int lvl = aLevelGrThen;
+        //int lvl = aLevelGrThen;
         // first equals compare
         IEnumerable<DataRow> qr = from r in _socrbase.AsEnumerable()
-                                  where (r.Field<short>("cLvl") > lvl && r.Field<String>("cSName2").Equals(aSrc))
+                                  where (r.Field<short>("cLvl") > aLevelGrThen && r.Field<String>("cSName2").Equals(aSrc))
                                   orderby r.Field<short>("cLvl")
           select r;
         // second contains
         if (qr.Count() == 0)
         {
           qr = from r in _socrbase.AsEnumerable()
-               where (r.Field<short>("cLvl") > lvl && r.Field<String>("cSName2").Contains(aSrc))
+               where (r.Field<short>("cLvl") > aLevelGrThen && r.Field<String>("cSName2").Contains(aSrc))
                orderby r.Field<short>("cLvl")
                select r;
         }
@@ -78,7 +87,7 @@ namespace ProgTor.ParAd
         if (qr.Count() == 0 && aSrc.Length > 2)
         {
           qr = from r in _socrbase.AsEnumerable()
-               where (r.Field<short>("cLvl") > lvl && r.Field<String>("cName").Contains(aSrc))
+               where (r.Field<short>("cLvl") > aLevelGrThen && r.Field<String>("cName").Contains(aSrc))
                orderby r.Field<short>("cLvl")
                select r;
         }
@@ -86,11 +95,40 @@ namespace ProgTor.ParAd
         if (qr.Count() > 0)
         {
           DataRow dr = qr.First();
-          aLevelGrThen = CASTools.ConvertToInt32Or0(dr["cLvl"]);
-          return CASTools.ConvertToInt32Or0(dr["cCode"]);
+          fiBase fi = new fiBase();
+          fi.ShortNameType = dr["cSName"].ToString();
+          fi.SocrBaseCode = ParAd.ConvertToInt16Or0(dr["cCode"]);
+          fi.Level = ParAd.ConvertToInt16Or0(dr["cLvl"]);
+          return fi;
         }
       }
-      return 0;
+      return null;
+    }
+
+    public fiAdrObj FindInRegion (String aSrc)
+    {
+      if (_reg.Rows.Count > 0)
+      {
+        IEnumerable<DataRow> qr = from r in _reg.AsEnumerable()
+                                  where r.Field<String>("cUName").Equals(aSrc.ToUpper())
+                                  select r;
+
+        if (qr.Count() > 0)
+        {
+          DataRow dr = qr.First();
+          fiAdrObj fi = new fiAdrObj();
+          fi.aoGUID = dr["cGUID"].ToString();
+          fi.RegionCode = dr["cRegCode"].ToString();
+          fi.ShortNameType = dr["cSName"].ToString();
+          fi.FormalName = dr["cFName"].ToString();
+          fi.ActStatus = CASTools.ConvertToInt32Or0(dr["cStatus"]);
+          fi.LiveStatus = CASTools.ConvertToInt32Or0(dr["cLive"]);
+          fi.Level = ParAd.ConvertToInt16Or0(dr["cLevel"]);
+          return fi;
+        }
+      }
+
+      return null;
     }
 
     public bool LoadAll()
@@ -135,6 +173,7 @@ namespace ProgTor.ParAd
 
     /// <summary>
     /// Load region first level. Parents undefined!
+    /// cGUID, cRegCode, cSName, cFName, cUName, cStatus, cLive, cLevel, cIsLoadNext
     /// </summary>
     /// <returns>true if okay, else false</returns>
     public bool LoadRegion()
@@ -150,6 +189,30 @@ namespace ProgTor.ParAd
       }
 
       return false;
+    }
+
+ 
+    public int AddFiasItem(fiBase aFI)
+    {
+      return AddFiasItem(aFI, null);
+    }
+    public int AddFiasItem(fiBase aFI, fiBase aFIParent)
+    {
+      if (aFIParent == null)
+      {
+        return _arrFI.Add(aFI);
+
+      }
+      else
+      {
+        return aFIParent.AddChild(aFI);
+      }
+
+    }
+
+    public void Clear()
+    {
+      _arrFI.Clear();
     }
   }
 }

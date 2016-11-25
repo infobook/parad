@@ -47,13 +47,15 @@
   <ItemGroup>
     <Compile Include="Experience.cs" />
     <Compile Include="FIAS.cs" />
-    <Compile Include="fItem.cs" />
+    <Compile Include="fiBase.cs" />
+    <Compile Include="fiAdrObj.cs" />
     <Compile Include="frmParad.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmParad.Designer.cs">
       <DependentUpon>frmParad.cs</DependentUpon>
     </Compile>
+    <Compile Include="paItem.cs" />
     <Compile Include="ParAd.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -8,7 +8,7 @@ namespace ProgTor.ParAd
   /// <summary>
   /// FIAS item
   /// </summary>
-  public class fItem
+  public class fiAdrObj : fiBase
   {
     /// <summary>
     /// Глобальный уникальный идентификатор адресного объекта
@@ -31,10 +31,21 @@ namespace ProgTor.ParAd
     СС+РРР+ГГГ+ППП+СССС+УУУУ+ДДДД (или ЗЗЗЗ)+ОООО
     , где:
     */
+    public string GetCode
+    {
+      get
+      {
+        //СС+РРР+ГГГ+ППП+СССС+УУУУ
+        return String.Format(
+          "{0,2:00} {1,3:000} {2,3:000} {3,3:000} {4,4:0000} {5,4:0000}"
+          , RegionCode, AreaCode, CityCode, PlaceCode, PlanCode, StreetCode
+        );
+      }
+    }
     /// <summary>
     /// СС – код субъекта Российской Федерации  – региона
     /// </summary>
-    public short RegionCode;
+    public string RegionCode;
     public short AutoCode; // Код автономии
     /// <summary>
     /// РРР – код района;
@@ -71,43 +82,33 @@ namespace ProgTor.ParAd
     public short oooo;
 
     /// <summary>
-    /// "Уровень адресного объекта" содержит номер уровня 
-    /// классификации адресных объектов. 
+    /// Статус последней исторической записи в жизненном цикле адресного объекта:
+    /// 0 – Не последняя
+    /// 1 - Последняя
     /// </summary>
-    public short Level;
-    /*
-     Перечень уровней адресных объектов и соответствующих им типов адресных объектов определен в таблице SOCRBASE ФИАС
-      Условно выделены следующие уровни адресных объектов:
-       1 – уровень региона
-       2 – уровень автономного округа (устаревшее)
-       3 – уровень района
-       35 – уровень городских и сельских поселений
-       4 – уровень города
-       5 – уровень внутригородской территории (устаревшее)
-       6 – уровень населенного пункта
-       65 – планировочная структура
-       7 – уровень улицы
-       75 – земельный участок
-       8 – здания, сооружения, объекта незавершенного строительства
-       9 – уровень помещения в пределах здания, сооружения
-       90 – уровень дополнительных территорий (устаревшее)
-       91 – уровень объектов на дополнительных территориях (устаревшее)
-   */
+    public int ActStatus;
 
-    public short SocrBaseCode;
+    /// <summary>
+    /// Статус актуальности адресного объекта ФИАС на текущую дату:
+    /// 0 – Не актуальный
+    /// 1 - Актуальный
+    /// </summary>
+    public int LiveStatus;
 
-    public fItem()
+
+    public fiAdrObj()
     {
       _init();
-
     }
 
-    private void _init()
+    protected override void _init()
     {
+      base._init();
+
       aoGUID = null;
       FormalName = null;
 
-      RegionCode = 0;
+      RegionCode = null;
       AutoCode = 0;
       AreaCode = 0;
       CityCode = 0;
@@ -118,9 +119,14 @@ namespace ProgTor.ParAd
 
       dddd = 0;
       oooo = 0;
+    }
 
-      Level = 0;
 
+
+    public override string ToString()
+    {
+      return ShortNameType + " " + FormalName + " ["+GetCode+
+        "] level="+Level + " socr="+SocrBaseCode;
     }
   }
 }

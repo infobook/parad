@@ -290,10 +290,55 @@ ORDER BY
       </Params>
     </Query>
     <Query>
+      <Code>113</Code>
+      <Name>SELECT_BY_POSTALCODE</Name>
+      <DateCreate>2016-11-14T09:40:05.5293693+03:00</DateCreate>
+      <DateLastModified>2016-11-24T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT 
+	AO1.[AOGUID]
+	,AO1.[SHORTNAME] 
+	,AO1.[FORMALNAME]
+	,AO1.[AOLEVEL]
+	
+	,AO2.[AOGUID]
+	,AO2.[SHORTNAME] 
+	,AO2.[FORMALNAME]
+	,AO2.[AOLEVEL]
+
+	,AO3.[AOGUID]
+	,AO3.[SHORTNAME] 
+	,AO3.[FORMALNAME]
+	,AO3.[AOLEVEL]
+FROM 
+	([ADDROBJ] AS AO1
+		LEFT JOIN [ADDROBJ] AS AO2 ON AO1.[PARENTGUID] = AO2.[AOGUID])
+		LEFT JOIN [ADDROBJ] AS AO3 ON AO2.[PARENTGUID] = AO3.[AOGUID]
+WHERE
+	AO1.[POSTALCODE] LIKE '#?index?#'
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>3</Number>
+          <Title>Почтовый индекс</Title>
+          <Name>index</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>115035</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+      </Params>
+    </Query>
+    <Query>
       <Code>107</Code>
       <Name>SELECT_LEVEL_GR_1</Name>
       <DateCreate>2016-11-14T17:49:42.4988337+03:00</DateCreate>
-      <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-24T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -301,7 +346,10 @@ ORDER BY
 	[AOGUID] AS [aGUID]
 	,[SHORTNAME]  AS [aSName]
     ,[FORMALNAME] AS [aFName]
+    ,UCase([FORMALNAME]) AS [cUName]
+
 	,[ACTSTATUS]  AS [aStatus]
+	,[LIVESTATUS] AS [cLive]
 	,[AOLEVEL] AS [aLevel]
 	
      ,[REGIONCODE] AS [aRegCode] 
@@ -318,20 +366,41 @@ ORDER BY
 FROM
 	[ADDROBJ]
 WHERE
-	[LIVESTATUS] = 1
-	AND [AOLEVEL] in (3,4)
-	AND [REGIONCODE] = '69'
+	[AOLEVEL] in (#?GetLevel?#)
+	AND [REGIONCODE] = '#?RegCode?#'
 ORDER BY 
-	[FORMALNAME]</Text>
+	[FORMALNAME], [LIVESTATUS] desc
+</Text>
       <XSLT />
       <ImageName />
-      <Params />
+      <Params>
+        <Param>
+          <Number>2</Number>
+          <Title>Код региона</Title>
+          <Name>RegCode</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>77</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>4</Number>
+          <Title>Уровни (3,4)</Title>
+          <Name>GetLevel</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>3,35,4,5,6,65,7</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+      </Params>
     </Query>
     <Query>
       <Code>105</Code>
       <Name>SELECT_LEVEL1</Name>
       <DateCreate>2016-10-25T16:06:43.0734085+03:00</DateCreate>
-      <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-22T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -341,6 +410,7 @@ SELECT
 	,[REGIONCODE] AS [cRegCode]
 	,[SHORTNAME]  AS [cSName]
     ,[FORMALNAME] AS [cFName]
+    ,UCase([FORMALNAME]) AS [cUName]
 	,[ACTSTATUS] AS [cStatus]
 	,[LIVESTATUS] AS [cLive]
 	,[AOLEVEL] AS [cLevel]
@@ -350,7 +420,7 @@ FROM
 WHERE
 	[PARENTGUID] is null	
 ORDER BY 
-	[FORMALNAME]
+	[FORMALNAME], [LIVESTATUS] desc
 </Text>
       <XSLT />
       <ImageName />
@@ -360,7 +430,7 @@ ORDER BY
       <Code>45</Code>
       <Name>Socrbase</Name>
       <DateCreate>2016-11-03T13:43:20.9161679+03:00</DateCreate>
-      <DateLastModified>2016-11-18T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-21T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -401,22 +471,13 @@ ORDER BY SOCRNAME, [LEVEL]~SOCRNAME, LEVEL
     </Query>
     <Query>
       <Code>0</Code>
-      <Name>----TEST-ADROBJ</Name>
-      <DateCreate>2016-11-14T09:40:05.5293693+03:00</DateCreate>
-      <DateLastModified>2016-11-14T00:00:00+03:00</DateLastModified>
+      <Name>Новый запрос 7</Name>
+      <DateCreate>2016-11-24T15:35:52.8036286+03:00</DateCreate>
+      <DateLastModified>2016-11-24T15:35:52.8036286+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author />
       <Note />
-      <Text>SELECT 
-	[AOGUID], 
-	[SHORTNAME] + '. ' + [FORMALNAME],
-	1,
-	[AOGUID]
-FROM 
-	[ADDROBJ]
-WHERE
-	[PARENTGUID] is null
-</Text>
+      <Text>SELECT * FROM xxx</Text>
       <XSLT />
       <ImageName />
       <Params />

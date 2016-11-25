@@ -5,275 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Diagnostics;
 using CommandAS.QueryLib;
 
 namespace ProgTor.ParAd
 {
-  /// <summary>
-  /// 
-  /// </summary>
-  public class paItem // : INotifyPropertyChanged
-  {
-    public enum Delim
-    {
-      Undefine = 0,
-      WhiteSpase = 1,
-      Point = 2,
-      Comma = 3,
-      Bracket = 4,
-      No = 5
-    }
-
-    /// <summary>
-    /// This is item, itself value of looking.
-    /// </summary>
-    public StringBuilder pItem {get; set;}
-
-    /// <summary>
-    /// Get item title.
-    /// </summary>
-    public String pItemTitle
-    {
-      get 
-      {
-        
-        if (pItem != null)
-        {
-          return pItem.ToString();
-        }
-        else if (pIsDelim)
-        {
-          return "     --->";
-        }
-        else
-          return "null";
-      }
-    }
-    /// <summary>
-    /// Get item property
-    /// </summary>
-    public String pItemProperty
-    {
-      get
-      {
-        if (pIsAbr)
-        {
-          return "ABR";
-        }
-        else if (pIsInsideSlash)
-        {
-          return "insede slash";
-        }
-        else if (pIsWordWithUpperInside)
-        {
-          return "word with up inside";
-        }
-        else if (pIsLetterDigit)
-        {
-          return "letter & digit";
-        }
-        else if (pIsIndex)
-        {
-          return "index";
-        }
-        else if (pIsDelim)
-        {
-          switch (pDelim)
-          {
-            case Delim.Bracket:
-              return "{bracket}";
-            case Delim.Comma:
-              return "{comma}";
-            case Delim.No:
-              return "{No}";
-            case Delim.Point:
-              return "{point}";
-            case Delim.WhiteSpase:
-              return "{whitespase}";
-            case Delim.Undefine:
-            default:
-              return "{delim undefined!}";
-          }
-        }
-        else
-          return string.Empty;
-      }
-    }
-    /// <summary>
-    /// This is word - letter only!
-    /// </summary>
-    public bool pIsWord {get; set;}
-    /// <summary>
-    ///  This is number - digital only!
-    /// </summary>
-    public bool pIsDigit {get; set;}
-    /// <summary>
-    /// This is mixed letters and digitals.
-    /// </summary>
-    public bool pIsLetterDigit {get; set;}
-    /// <summary>
-    /// Word is upper charcter inside word, not first!
-    /// </summary>
-    public bool pIsWordWithUpperInside;
-    /// <summary>
-    /// Word or number is inside slash character.
-    /// </summary>
-    public bool pIsInsideSlash;
-
-    private bool _isAbr;
-    /// <summary>
-    /// This is abridgment
-    /// </summary>
-    public bool pIsAbr 
-    {
-      get { return _isAbr; }
-      set
-      {
-        _isAbr = value;
-        if (_isAbr)
-        {
-          // serach to the SOCRBASE table
-        }
-      }
-    }
-    /// <summary>
-    /// Abridgment code from FIAS.SOCRBASE table
-    /// </summary>
-    public int pAbrCodeR { get; set; }
-
-    private Delim _delim;
-
-    public Delim pDelim
-    {
-      get { return _delim;  }
-      set 
-      { 
-        _delim = value;
-        pItem = null;
-      }
-    }
-
-    public bool pIsDelim 
-    {
-      get { return _delim != Delim.Undefine; }
-    }
-
-    public bool pIsEmpty
-    {
-      get
-      {
-        return !(pIsDelim || pIsDigit || pIsLetterDigit || pIsWord);
-      }
-    }
-
-    /// <summary>
-    /// Is this item index?
-    /// </summary>
-    public bool pIsIndex
-    {
-      get { return pIsDigit && pItem.Length == 6; }
-    }
-
-    /// <summary>
-    /// Is skip this word?
-    /// </summary>
-    public bool pIsSkipIt { get; set; }
-
-    /// <summary>
-    /// Reference to the FIAS item.
-    /// </summary>
-    public fItem pFiasItem { get; set; }
-
-    public paItem()
-    {
-      pItem = new StringBuilder();
-
-      pIsWord = false;
-      pIsDigit = false;
-      pIsLetterDigit = false;
-      pIsWordWithUpperInside = false;
-      pIsInsideSlash = false;
-      pIsSkipIt = false;
-      _isAbr = false;
-      pAbrCodeR = 0;
-
-      _delim = Delim.Undefine;
-
-      pFiasItem = null;
-    }
-
-    public void AppendNextLetter(char aChar)
-    {
-      ///
-      /// search flowing combination:
-      /// OneTwo - this is propable two words, mistake!!!
-      /// 
-      if (pItem.Length > 0 && char.IsUpper(aChar) && !pIsWordWithUpperInside)
-      {
-        char pc = pItem[pItem.Length - 1];
-        if (char.IsLetter(pc) && char.IsLower(pc))
-          pIsWordWithUpperInside = true;
-      }
-
-      ///
-      /// add character to the pItem
-      ///
-      pItem.Append(aChar);
-
-
-      ///
-      /// correct flags
-      /// 
-      if (pIsLetterDigit || pIsWord) 
-      {
-      }
-      else if (pIsDigit)
-      {
-        pIsDigit = false;
-        pIsWord = false;
-        pIsLetterDigit = true;
-      }
-      else
-      {
-        pIsWord = true;
-      }
-
-      //OnPropertyChanged("pItemTitle");
-    }
-
-    public void AppendNextDigit(char aChar)
-    {
-      pItem.Append(aChar);
-      if (pIsLetterDigit || pIsDigit) 
-      {
-      }
-      else if (pIsWord)
-      {
-        pIsDigit = false;
-        pIsWord = false;
-        pIsLetterDigit = true;
-      }
-      else
-      {
-        pIsDigit = true;
-      }
-      //OnPropertyChanged("pItemTitle");
-    }
-
-    //public event PropertyChangedEventHandler PropertyChanged;
-    //protected void OnPropertyChanged(string propertyName)
-    //{
-    //  if (PropertyChanged != null)
-    //    PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    //}
-  }
-
   public class ParAd
   {
     private String _src;
-    private ArrayList _pai;
+    private ArrayList _arrPAI;
+    private ArrayList _arrPAI2;
 
-    private FIAS _fi;
+    private FIAS _fias;
     private Experience _exp;
 
     public String pSourceText
@@ -290,26 +33,41 @@ namespace ProgTor.ParAd
 
     public ArrayList pArrPaItems
     {
-      get { return _pai; }
+      get { return _arrPAI; }
+    }
+
+    public ArrayList pArrPaItems2
+    {
+      get { return _arrPAI2; }
     }
 
     public ParAd(FIAS aFIAS, Experience aExp)
     {
-      _fi = aFIAS;
+      _fias = aFIAS;
       _exp = aExp;
-      _pai = new ArrayList();
+      _arrPAI = new ArrayList();
+      _arrPAI2 = new ArrayList();
     }
 
     private paItem _addDelimAndNextPAItem(paItem aPAI, paItem.Delim aDelim)
     {
+      aPAI = _addPAItem(aPAI);
+
+      aPAI.pDelim = aDelim;
+      _arrPAI.Add(aPAI);
+      return new paItem();
+    }
+
+    private paItem _addPAItem(paItem aPAI)
+    {
       if (!aPAI.pIsEmpty)
       {
-        _pai.Add(aPAI);
+        aPAI.CheckForm_1aya();
+        _arrPAI.Add(aPAI);
         aPAI = new paItem();
       }
-      aPAI.pDelim = aDelim;
-      _pai.Add(aPAI);
-      return new paItem();
+
+      return aPAI;
     }
 
     private StringBuilder _replaceLat2Cyr(StringBuilder aSB)
@@ -344,7 +102,7 @@ namespace ProgTor.ParAd
     {
       StepOne_Characters();
 
-      foreach (paItem pa in _pai)
+      foreach (paItem pa in _arrPAI)
       {
         if (pa.pIsWord)
         {
@@ -381,27 +139,23 @@ namespace ProgTor.ParAd
 
       paItem pa = new paItem();
 
-      _pai.Clear();
+      _arrPAI.Clear();
 
       for (int ii = 0; ii < wsb.Length; ii++)
       {
-        if (char.IsWhiteSpace(wsb[ii]) || wsb[ii] == ';' || wsb[ii] == ':')
+        if (char.IsWhiteSpace(wsb[ii]))
         {
-          if (!pa.pIsEmpty)
-          { 
-            _pai.Add(pa);
-            pa = new paItem();
-          }
+          pa = _addPAItem(pa);
           /// skip such combination:
           /// "г. Москва" - space skip
           /// "д. 10, кв. 11" -spaces skip
           /// "one      tow" - skip more then one space
-          if (_pai.Count > 0 && ((paItem)_pai[_pai.Count-1]).pIsDelim)
+          if (_arrPAI.Count > 0 && ((paItem)_arrPAI[_arrPAI.Count-1]).pIsDelim)
           //if (pa.pIsDelim)
             continue;  // if previous is whitespace skip this
 
           pa.pDelim = paItem.Delim.WhiteSpase;
-          _pai.Add(pa);
+          _arrPAI.Add(pa);
           pa = new paItem();
         }
         else if (wsb[ii] == '.')
@@ -412,6 +166,14 @@ namespace ProgTor.ParAd
         else if (wsb[ii] == ',')
         {
           pa = _addDelimAndNextPAItem(pa, paItem.Delim.Comma);
+        }
+        else if (wsb[ii] == ':')
+        {
+          pa = _addDelimAndNextPAItem(pa, paItem.Delim.Colon);
+        }
+        else if (wsb[ii] == ';')
+        {
+          pa = _addDelimAndNextPAItem(pa, paItem.Delim.Semicolon);
         }
         else if (wsb[ii] == '№')
         {
@@ -445,25 +207,85 @@ namespace ProgTor.ParAd
 
       /// add last item if this not empty
       if (!pa.pIsEmpty)
-        _pai.Add(pa);
+        _arrPAI.Add(pa);
     }
 
     public void StepTwo_FIAS()
     {
-      int lvl = 0;
-      //int code = 0;
-      foreach (paItem pa in _pai)
+      short lvl = 0;
+      //short code = 0;
+      _fias.Clear();
+
+      foreach (paItem pa in _arrPAI)
       {
         if (pa.pIsSkipIt)
           continue;
 
         if (pa.pIsWord)
         {
-          pa.pAbrCodeR = _fi.IsSorcbase(pa.pItem.ToString(), ref lvl);
- 
+          fiBase fi = _fias.FindInSorcbase(pa.pItem.ToString(), lvl);
+          if (fi != null)
+          {
+            //pa.pFiasItem = fi;
+            fi.pPAISrc = pa;
+            _fias.AddFiasItem(fi);
+            lvl = fi.Level;
+          }
         }
       }
 
+      #region search region
+      {
+        fiAdrObj fi = null;
+        foreach (paItem pa in _arrPAI)
+        {
+          if (pa.pIsSkipIt)
+            continue;
+
+          if (pa.pIsWord)
+          {
+            fi = _fias.FindInRegion(pa.pItem.ToString());
+            if (fi != null)
+            {
+              //pa.pFiasItem = fi;
+              fi.pPAISrc = pa;
+              _fias.AddFiasItem(fi);
+              break;
+            }
+          }
+        }
+
+        if (fi == null)
+        {
+          // region not found !!!
+        }
+      }
+      #endregion
+
+
+    }
+
+    public void StepThree_PaItem2()
+    {
+      _arrPAI2.Clear();
+
+      foreach (paItem pai in _arrPAI)
+      {
+        //if ()
+      }
+    }
+
+
+    [DebuggerStepThrough]
+    static public short ConvertToInt16Or0(object aObj)
+    {
+      short ret = 0;
+      try
+      {
+        ret = Convert.ToInt16(aObj);
+      }
+      catch { }
+      return ret;
     }
   }
 
