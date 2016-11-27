@@ -215,11 +215,14 @@ namespace ProgTor.ParAd
 
     private void _readHistory()
     {
-      using (TextReader rd = File.OpenText(FILE_NAME_HISTORY))
+      if (File.Exists(FILE_NAME_HISTORY))
       {
-        while (rd.Peek() > -1)
-          _cboSrc.Items.Add(rd.ReadLine());
+        using (TextReader rd = File.OpenText(FILE_NAME_HISTORY))
+        {
+          while (rd.Peek() > -1)
+            _cboSrc.Items.Add(rd.ReadLine());
 
+        }
       }
     }
 

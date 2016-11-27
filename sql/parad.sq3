@@ -8,9 +8,11 @@ DataBase=KB;
 Integrated Security=SSPI;
 Persist Security Info=false;
 
+Provider=Microsoft.Jet.OLEDB.4.0;
+Provider=vfpoledb;
 </Note>
   <DBConnection>Provider=Microsoft.ACE.OLEDB.12.0;
-Data Source="C:\data\FIAS\fias20161020";
+Data Source="D:\tor\fias20161114";
 Extended Properties=dBase IV;
 User ID=Admin;</DBConnection>
   <ParamBegDelim>#?</ParamBegDelim>
