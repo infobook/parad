@@ -7,14 +7,16 @@ SERVER=192.168.70.140;
 DataBase=KB;
 Integrated Security=SSPI;
 Persist Security Info=false;
-
-Provider=Microsoft.Jet.OLEDB.4.0;
-Provider=vfpoledb;
-</Note>
-  <DBConnection>Provider=Microsoft.ACE.OLEDB.12.0;
-Data Source="D:\tor\fias20161114";
+---------------------------------------------------------------------------
+Provider=Microsoft.ACE.OLEDB.12.0;
+Data Source="C:\data\FIAS\fias20161020";
 Extended Properties=dBase IV;
-User ID=Admin;</DBConnection>
+User ID=Admin;</Note>
+  <DBConnection>Provider=SQLOLEDB;
+SERVER=(local);
+DataBase=fias;
+Integrated Security=SSPI;
+Persist Security Info=false;</DBConnection>
   <ParamBegDelim>#?</ParamBegDelim>
   <ParamEndDelim>?#</ParamEndDelim>
   <Hash />
@@ -193,6 +195,80 @@ ORDER BY
       </Params>
     </Query>
     <Query>
+      <Code>107</Code>
+      <Name>ADROBJ_BY_reg_level_name</Name>
+      <DateCreate>2016-11-14T17:49:42.4988337+03:00</DateCreate>
+      <DateLastModified>2016-11-30T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+	[AOGUID] AS [aGUID]
+
+	,[ACTSTATUS]  AS [aStatus]
+	,[LIVESTATUS] AS [cLive]
+	,[AOLEVEL] AS [aLevel]
+
+	,[SHORTNAME]  AS [aSName]
+    ,[FORMALNAME] AS [aFName]
+--    ,UPPER([FORMALNAME]) AS [cUName]
+
+     ,[REGIONCODE] AS [aRegCode] 
+     ,[AREACODE] AS [aAreaCode]	
+     ,[CITYCODE] AS [aCityCode]	
+     ,[PLACECODE] AS [aPlaceCode]	 
+--	 ,[PLANCODE] AS [aPlanCode]
+     ,[STREETCODE] AS [aStreetCode]	
+
+--     ,[CTARCODE]	
+--     ,[EXTRCODE]	
+--     ,[SEXTCODE]
+
+FROM
+	[ADDROBJ]
+WHERE
+	[FORMALNAME] LIKE '%#?Name?#%'
+--	AND [AOLEVEL] in (GetLevel?#)
+--	AND [REGIONCODE] = 'RegCode?#'
+--ORDER BY 
+--	[FORMALNAME], [LIVESTATUS] desc
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>2</Number>
+          <Title>Код региона</Title>
+          <Name>RegCode</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>77</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>4</Number>
+          <Title>Уровни (3,4)</Title>
+          <Name>GetLevel</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>3,35,4,5,6,65,7</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>6</Number>
+          <Title>Насвание</Title>
+          <Name>Name</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>маршала жукова</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+      </Params>
+    </Query>
+    <Query>
       <Code>0</Code>
       <Name>AdrObjNC</Name>
       <DateCreate>2016-10-25T16:06:33.5183436+03:00</DateCreate>
@@ -292,6 +368,23 @@ ORDER BY
       </Params>
     </Query>
     <Query>
+      <Code>0</Code>
+      <Name>Len FormalName in AdrObj</Name>
+      <DateCreate>2016-11-24T15:35:52.8036286+03:00</DateCreate>
+      <DateLastModified>2016-11-26T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+    LEN([FORMALNAME]) AS [cFNameLen]
+	,COUNT(*)
+FROM [ADDROBJ]
+GROUP BY LEN([FORMALNAME])</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
+    </Query>
+    <Query>
       <Code>113</Code>
       <Name>SELECT_BY_POSTALCODE</Name>
       <DateCreate>2016-11-14T09:40:05.5293693+03:00</DateCreate>
@@ -337,12 +430,12 @@ WHERE
       </Params>
     </Query>
     <Query>
-      <Code>107</Code>
-      <Name>SELECT_LEVEL_GR_1</Name>
-      <DateCreate>2016-11-14T17:49:42.4988337+03:00</DateCreate>
-      <DateLastModified>2016-11-24T00:00:00+03:00</DateLastModified>
+      <Code>0</Code>
+      <Name>SELECT_FROM_ADROBJ</Name>
+      <DateCreate>2016-11-26T13:47:17.4500107+03:00</DateCreate>
+      <DateLastModified>2016-11-28T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
-      <Author>M.Tor</Author>
+      <Author />
       <Note />
       <Text>SELECT
 	[AOGUID] AS [aGUID]
@@ -364,45 +457,22 @@ WHERE
      ,[CTARCODE]	
      ,[EXTRCODE]	
      ,[SEXTCODE]
-
-FROM
+FROM 
 	[ADDROBJ]
 WHERE
-	[AOLEVEL] in (#?GetLevel?#)
-	AND [REGIONCODE] = '#?RegCode?#'
-ORDER BY 
-	[FORMALNAME], [LIVESTATUS] desc
+	LEN([FORMALNAME]) &lt; 4
+ORDER BY
+	[FORMALNAME]
 </Text>
       <XSLT />
       <ImageName />
-      <Params>
-        <Param>
-          <Number>2</Number>
-          <Title>Код региона</Title>
-          <Name>RegCode</Name>
-          <Type>String</Type>
-          <Inset>true</Inset>
-          <CurrentValue>77</CurrentValue>
-          <DefaultValue />
-          <SelectValue />
-        </Param>
-        <Param>
-          <Number>4</Number>
-          <Title>Уровни (3,4)</Title>
-          <Name>GetLevel</Name>
-          <Type>String</Type>
-          <Inset>true</Inset>
-          <CurrentValue>3,35,4,5,6,65,7</CurrentValue>
-          <DefaultValue />
-          <SelectValue />
-        </Param>
-      </Params>
+      <Params />
     </Query>
     <Query>
       <Code>105</Code>
       <Name>SELECT_LEVEL1</Name>
       <DateCreate>2016-10-25T16:06:43.0734085+03:00</DateCreate>
-      <DateLastModified>2016-11-22T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-26T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -432,7 +502,7 @@ ORDER BY
       <Code>45</Code>
       <Name>Socrbase</Name>
       <DateCreate>2016-11-03T13:43:20.9161679+03:00</DateCreate>
-      <DateLastModified>2016-11-21T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-11-25T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -440,9 +510,9 @@ ORDER BY
 
 SELECT 
 	CInt([LEVEL]) AS [cLvl]
-	, [LEVEL] AS [cLevel]
-	, SOCRNAME AS [cName]
 	, SCNAME AS [cSName]
+	, SOCRNAME AS [cName]
+	, [LEVEL] AS [cLevel]
 	, CInt(KOD_T_ST) AS [cCode]
 	, '' AS cSName2
 FROM 
@@ -459,7 +529,7 @@ WHERE
           <Name>OREDR_BY</Name>
           <Type>StrSelectList</Type>
           <Inset>true</Inset>
-          <CurrentValue>:&lt;без сортировки&gt;</CurrentValue>
+          <CurrentValue>ORDER BY SCNAME:SCNAME</CurrentValue>
           <DefaultValue />
           <SelectValue>~&lt;без сортировки&gt;
 ORDER BY [LEVEL]~LEVEL
@@ -470,19 +540,6 @@ ORDER BY SOCRNAME, [LEVEL]~SOCRNAME, LEVEL
 </SelectValue>
         </Param>
       </Params>
-    </Query>
-    <Query>
-      <Code>0</Code>
-      <Name>Новый запрос 7</Name>
-      <DateCreate>2016-11-24T15:35:52.8036286+03:00</DateCreate>
-      <DateLastModified>2016-11-24T15:35:52.8036286+03:00</DateLastModified>
-      <Hidden>false</Hidden>
-      <Author />
-      <Note />
-      <Text>SELECT * FROM xxx</Text>
-      <XSLT />
-      <ImageName />
-      <Params />
     </Query>
   </Queries>
 </Session>

@@ -14,11 +14,11 @@ namespace ProgTor.ParAd
   /// Class implement all interaction with FIAS DB.
   /// 
   /// created: 02.11.2016 by M.Tor
-  /// modified: 14.11.2016 by M.Tor
+  /// modified: 29.11.2016 by M.Tor
   /// </summary>
   public class FIAS
   {
-    public const String SESSION_NAME = "parad.sq3";
+//    public const String SESSION_NAME = "parad.sq3";
 
     private Performer _qs;
 
@@ -53,10 +53,10 @@ namespace ProgTor.ParAd
     {
       return _qs.Load(aFileName);
     }
-    public bool LoadSession()
-    {
-      return _qs.Load(SESSION_NAME);
-    }
+    //public bool LoadSession()
+    //{
+    //  return _qs.Load(SESSION_NAME);
+    //}
 
     /// <summary>
     /// 
@@ -107,7 +107,7 @@ namespace ProgTor.ParAd
 
     public fiAdrObj FindInRegion (String aSrc)
     {
-      if (_reg.Rows.Count > 0)
+      if (_reg != null && _reg.Rows.Count > 0)
       {
         IEnumerable<DataRow> qr = from r in _reg.AsEnumerable()
                                   where r.Field<String>("cUName").Equals(aSrc.ToUpper())

@@ -54,9 +54,9 @@ namespace ProgTor.ParAd
     {
       get
       {
-        if (pIsAbr)
+        if (pIsAdrObjType)
         {
-          return "ABR";
+          return "AdrObjType = " + _aot;
         }
         else if (pIsInsideSlash)
         {
@@ -139,22 +139,25 @@ namespace ProgTor.ParAd
     /// Word or number is inside slash character.
     /// </summary>
     public bool pIsInsideSlash;
-
-    private bool _isAbr;
     /// <summary>
-    /// This is abridgment
+    /// This is abbreviation.
     /// </summary>
-    public bool pIsAbr
+    public bool pIsAbr;
+
+    private int _aot;
+
+    public int pAdrObjType
     {
-      get { return _isAbr; }
-      set
-      {
-        _isAbr = value;
-        if (_isAbr)
-        {
-          // serach to the SOCRBASE table
-        }
-      }
+      get { return _aot;  }
+      set { _aot = value; }
+    }
+
+    /// <summary>
+    /// This is address object type. As so, region,city,build and s.o.
+    /// </summary>
+    public bool pIsAdrObjType
+    {
+      get { return _aot > 0; }
     }
 
     //public bool pIsSocrBase
@@ -232,7 +235,8 @@ namespace ProgTor.ParAd
       pIsWordWithUpperInside = false;
       pIsInsideSlash = false;
       pIsSkipIt = false;
-      _isAbr = false;
+      pIsAbr = false;
+      _aot = 0;
       //pAbrCodeR = 0;
       _is1ya = false;
 
