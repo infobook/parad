@@ -33,7 +33,7 @@ DECLARE @SQLStm varchar(2000);
 --SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('тверская;ржев;марата');
 --SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('тверская;ржевский;итомля');
 --SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('тверская;вышневолоцкий;деревково');
-SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('москва;%спасская%');
+SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('москва;%рыбалко');
 --PRINT @SQLStm
 --PRINT '----------------------------'
 EXEC (@SQLStm);
