@@ -260,42 +260,31 @@ namespace ProgTor.ParAd
 
       RegistryKey regKey = Registry.CurrentUser.OpenSubKey(REG_APP_PATH);
 
-        if (regKey != null)
+      if (regKey != null)
+      {
+        try
         {
-          try
-          {
-               CASToolsReg.LoadSizeLocationForm(regKey, this);
-              if (_cboSrc.Items.Count > 0)
-              {
-                _cboSrc.SelectedIndex = CASTools.ConvertToInt32Or0(regKey.GetValue("SourceInd"));
-              }
-              int sp = 0;
-              sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SplitePosition"));
-              if (sp > 0)
-                _sc.SplitterDistance = sp;
-              sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SpliteResultPosition"));
-              if (sp > 0)
-                _scResult.SplitterDistance = sp;
-              CASToolsReg.LoadDataGridParameter(regKey, _dgvTgtS1, "ResTab");
+              CASToolsReg.LoadSizeLocationForm(regKey, this);
+            if (_cboSrc.Items.Count > 0)
+            {
+              _cboSrc.SelectedIndex = CASTools.ConvertToInt32Or0(regKey.GetValue("SourceInd"));
+            }
+            int sp = 0;
+            sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SplitePosition"));
+            if (sp > 0)
+              _sc.SplitterDistance = sp;
+            sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SpliteResultPosition"));
+            if (sp > 0)
+              _scResult.SplitterDistance = sp;
+            CASToolsReg.LoadDataGridParameter(regKey, _dgvTgtS1, "ResTab");
 
-          }
-<<<<<<< HEAD
-          catch { }
-          regKey.Close();
-=======
-          int sp = 0;
-          sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SplitePosition"));
-          if (sp > 0)
-            _sc.SplitterDistance = sp;
-          sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SpliteResultPosition"));
-          if (sp > 0)
-            _scResult.SplitterDistance = sp;
-          CASToolsReg.LoadDataGridParameter(regKey, _dgvTgtS1, "ResTab");
+            _workFolder = regKey.GetValue("WorkFolder", string.Empty).ToString();
 
-          _workFolder = regKey.GetValue("WorkFolder", String.Empty).ToString();
->>>>>>> 43f6b1b6831159a2673f11e25420dadfa47d2f97
         }
+        catch { }
 
+        regKey.Close();
+      }
     }
 
     private void SaveParameterToRegister()

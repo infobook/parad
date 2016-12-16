@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Data.OleDb;
 using CommandAS.Tools;
 using CommandAS.QueryLib;
 
@@ -191,6 +192,12 @@ namespace ProgTor.ParAd
       return false;
     }
 
+    public void FindAddrObjs(String aAddrObjsSet)
+    {
+      OleDbCommand cmd = _qs.pWDB.NewOleDbCommand();
+
+      cmd.CommandType = CommandType.StoredProcedure;
+    }
  
     public int AddFiasItem(fiBase aFI)
     {

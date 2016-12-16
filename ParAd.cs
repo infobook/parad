@@ -139,6 +139,10 @@ namespace ProgTor.ParAd
       return wsb;
     }
 
+    /// <summary>
+    /// Load arrya of address objects type from the file.
+    /// </summary>
+    /// <param name="aFN"></param>
     public void LoadAdrObjTypes(String aFN)
     {
       _arrAOT.Clear();
@@ -327,7 +331,7 @@ namespace ProgTor.ParAd
       }
       #endregion
 
-
+      _
     }
 
     public void Step_FindAdrObjType()
