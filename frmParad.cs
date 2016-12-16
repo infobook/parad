@@ -18,7 +18,9 @@ namespace ProgTor.ParAd
   public partial class frmParad : Form
   {
     public const string REG_APP_PATH = @"SOFTWARE\ProgTor\ParAd";
+    public const string FILE_NAME_SESSION = "parad.sq3";
     public const string FILE_NAME_HISTORY = "parad_history.txt";
+    public const string FILE_NAME_ADR_OBJ_TYPES = "AdrObjType.csv";
     
     private Performer _qs;
     private FIAS _fias;
@@ -45,6 +47,7 @@ namespace ProgTor.ParAd
       _txtLogs.ScrollToCaret();
     }
 
+    private String _workFolder;
 
     public frmParad()
     {
@@ -59,6 +62,7 @@ namespace ProgTor.ParAd
       //this.FormClosing += frmParad_FormClosing;
       //this.FormClosed += frmParad_FormClosed;
 
+      _workFolder = String.Empty;
       _initTT();
     }
 
@@ -84,6 +88,22 @@ namespace ProgTor.ParAd
     //void frmParad_FormClosed(object sender, FormClosedEventArgs e)
     //{
     //}
+    private String _getFullPath(String aFileName)
+    {
+      if (_workFolder.Length > 0)
+      {
+        if (_workFolder.Last() == '\\')
+          return _workFolder + aFileName;
+        else
+          return _workFolder + "\\" + aFileName;
+      }
+      else
+      {
+        return aFileName;
+      }
+
+    }
+
 
     void frmParad_Load(object sender, EventArgs e)
     {
@@ -100,10 +120,12 @@ namespace ProgTor.ParAd
     private void _init()
     {
       _log("beginig initialize program"+Environment.NewLine+"\t Please, waiting...");
+
       _qs = new Performer();
       _fias = new FIAS(_qs);
-      if (_fias.LoadSession(@"T:\CASNet4\ParAd\sql\parad.sq3"))
+      if (_fias.LoadSession(_getFullPath(FILE_NAME_SESSION)))
       {
+        _log("load session - " + _getFullPath(FILE_NAME_SESSION));
         _qs.pWDB.pConnectionString = _qs.pSes.DBConnection;
         if (_qs.pWDB.ConnectionOpen())
           _fias.LoadAll();
@@ -111,9 +133,15 @@ namespace ProgTor.ParAd
           _log(_qs.pError.description);
       }
       else
-        _err(@"Load session - T:\CASNet4\ParAd\sql\parad.sq3");
+      {
+        _err(@"Load session - " + _getFullPath(FILE_NAME_SESSION));
+      }
+
       _exp = new Experience();
       _pa = new ParAd(_fias, _exp);
+      _pa.LoadAdrObjTypes(_getFullPath(FILE_NAME_ADR_OBJ_TYPES));
+      _log("load AdrObjTypes (" + _pa.pArrAOT.Count + ") items");
+      
 
       _log("finished initialize program");
     }
@@ -206,7 +234,7 @@ namespace ProgTor.ParAd
     private void _saveHistory()
     {
       //using (FileStream fs = File.Create(FILE_NAME_HISTORY))
-      using (TextWriter wr = File.CreateText(FILE_NAME_HISTORY))
+      using (TextWriter wr = File.CreateText(_getFullPath(FILE_NAME_HISTORY)))
       {
         foreach (String st in _cboSrc.Items)
           wr.WriteLine(st);
@@ -215,9 +243,9 @@ namespace ProgTor.ParAd
 
     private void _readHistory()
     {
-      if (File.Exists(FILE_NAME_HISTORY))
+      if (File.Exists(_getFullPath(FILE_NAME_HISTORY)))
       {
-        using (TextReader rd = File.OpenText(FILE_NAME_HISTORY))
+        using (TextReader rd = File.OpenText(_getFullPath(FILE_NAME_HISTORY)))
         {
           while (rd.Peek() > -1)
             _cboSrc.Items.Add(rd.ReadLine());
@@ -251,8 +279,21 @@ namespace ProgTor.ParAd
               CASToolsReg.LoadDataGridParameter(regKey, _dgvTgtS1, "ResTab");
 
           }
+<<<<<<< HEAD
           catch { }
           regKey.Close();
+=======
+          int sp = 0;
+          sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SplitePosition"));
+          if (sp > 0)
+            _sc.SplitterDistance = sp;
+          sp = CASTools.ConvertToInt32Or0(regKey.GetValue("SpliteResultPosition"));
+          if (sp > 0)
+            _scResult.SplitterDistance = sp;
+          CASToolsReg.LoadDataGridParameter(regKey, _dgvTgtS1, "ResTab");
+
+          _workFolder = regKey.GetValue("WorkFolder", String.Empty).ToString();
+>>>>>>> 43f6b1b6831159a2673f11e25420dadfa47d2f97
         }
 
     }

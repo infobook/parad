@@ -6,12 +6,47 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Text.RegularExpressions;
+using CommandAS.Tools;
 using CommandAS.QueryLib;
 
 namespace ProgTor.ParAd
 {
+  public class AdrObjType
+  {
+    public int pCode;
+    public String pAbr;
+    private String[] _arrNames;
+
+    public String[] pArrNames
+    {
+      get { return _arrNames; }
+    }
+    public void SetNames(String aNames)
+    {
+      if (aNames != null)
+        _arrNames = aNames.Split(";".ToCharArray());
+      else
+        _arrNames = null;
+    }
+
+    public AdrObjType() : this(0, null, null)
+    {  }
+
+    public AdrObjType(int aCode, String aAbr, String aNames)
+    {
+      pCode = aCode;
+      pAbr = aAbr;
+      SetNames(aNames);
+    }
+
+  }
+
   public class ParAd
   {
+    private ArrayList _arrAOT;
+
     private String _src;
     private ArrayList _arrPAI;
     private ArrayList _arrPAI2;
@@ -31,6 +66,11 @@ namespace ProgTor.ParAd
       }
     }
 
+    public ArrayList pArrAOT
+    {
+      get { return _arrAOT; }
+    }
+
     public ArrayList pArrPaItems
     {
       get { return _arrPAI; }
@@ -45,6 +85,7 @@ namespace ProgTor.ParAd
     {
       _fias = aFIAS;
       _exp = aExp;
+      _arrAOT = new ArrayList();
       _arrPAI = new ArrayList();
       _arrPAI2 = new ArrayList();
     }
@@ -98,6 +139,28 @@ namespace ProgTor.ParAd
       return wsb;
     }
 
+    public void LoadAdrObjTypes(String aFN)
+    {
+      _arrAOT.Clear();
+
+      if (File.Exists(aFN))
+      {
+        using (TextReader rd = File.OpenText(aFN))
+        {
+          while (rd.Peek() > -1)
+          {
+            string rl = rd.ReadLine().Trim();
+            if (rl != null && rl.Length > 0)
+            {
+              string[] ss = rl.Split("\t".ToCharArray());
+              if (ss.Length == 3)
+                _arrAOT.Add(new AdrObjType(CASTools.ConvertToInt32Or0(ss[0]), ss[1], ss[2]));
+            }
+          }
+        }
+      }
+    }
+
     public void Run()
     {
       StepOne_Characters();
@@ -127,6 +190,8 @@ namespace ProgTor.ParAd
         }
 
       }
+
+      Step_FindAdrObjType();
 
       StepTwo_FIAS();
     }
@@ -212,27 +277,27 @@ namespace ProgTor.ParAd
 
     public void StepTwo_FIAS()
     {
-      short lvl = 0;
+      //short lvl = 0;
       //short code = 0;
       _fias.Clear();
 
-      foreach (paItem pa in _arrPAI)
-      {
-        if (pa.pIsSkipIt)
-          continue;
+      //foreach (paItem pa in _arrPAI)
+      //{
+      //  if (pa.pIsSkipIt)
+      //    continue;
 
-        if (pa.pIsWord)
-        {
-          fiBase fi = _fias.FindInSorcbase(pa.pItem.ToString(), lvl);
-          if (fi != null)
-          {
-            //pa.pFiasItem = fi;
-            fi.pPAISrc = pa;
-            _fias.AddFiasItem(fi);
-            lvl = fi.Level;
-          }
-        }
-      }
+      //  if (pa.pIsWord)
+      //  {
+      //    fiBase fi = _fias.FindInSorcbase(pa.pItem.ToString(), lvl);
+      //    if (fi != null)
+      //    {
+      //      //pa.pFiasItem = fi;
+      //      fi.pPAISrc = pa;
+      //      _fias.AddFiasItem(fi);
+      //      lvl = fi.Level;
+      //    }
+      //  }
+      //}
 
       #region search region
       {
@@ -263,6 +328,26 @@ namespace ProgTor.ParAd
       #endregion
 
 
+    }
+
+    public void Step_FindAdrObjType()
+    {
+      foreach (paItem pa in _arrPAI)
+      {
+        if (pa.pIsSkipIt)
+          continue;
+
+        if (pa.pIsWord)
+        {
+          foreach(AdrObjType aot in _arrAOT)
+          {
+            if (Regex.IsMatch(pa.pItem.ToString(), @"\b"+aot.pAbr+@"\b"))
+            {
+              pa.pAdrObjType = aot.pCode;
+            }
+          }
+        }
+      }
     }
 
     public void StepThree_PaItem2()
