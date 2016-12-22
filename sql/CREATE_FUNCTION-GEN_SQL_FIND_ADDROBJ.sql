@@ -32,7 +32,7 @@ BEGIN
 	DECLARE @II int, @PP int
 	DECLARE @CountWord int;
 
-	SET @SQLCmd = 'SELECT * FROM dbo.[SELECT_FORMALNAME](''';
+	SET @SQLCmd = 'SELECT * FROM dbo.[SELECT_ADDROBJNAME](''';
 	SET @II = CHARINDEX(';',@SRCSTR,0);
 
 	IF @II = 0

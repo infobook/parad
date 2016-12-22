@@ -18,17 +18,30 @@ namespace ProgTor.ParAd
     public int pCode;
     public String pAbr;
     private String[] _arrNames;
+    //private fiAdrObj[] _arrFIAO;
 
     public String[] pArrNames
     {
       get { return _arrNames; }
     }
+
+    //public fiAdrObj[] pArrFIAO
+    //{
+    //  get { return _arrFIAO; }
+    //}
+
     public void SetNames(String aNames)
     {
       if (aNames != null)
+      {
         _arrNames = aNames.Split(";".ToCharArray());
+        //_arrFIAO = new fiAdrObj[_arrNames.Length];
+      }
       else
+      {
         _arrNames = null;
+        //_arrFIAO = null;
+      }
     }
 
     public AdrObjType() : this(0, null, null)
@@ -41,6 +54,16 @@ namespace ProgTor.ParAd
       SetNames(aNames);
     }
 
+    //public void FindFIAS(FIAS aF)
+    //{
+    //  if (_arrNames == null)
+    //    return;
+
+    //  for (int ii=0; ii < _arrNames.Length; ii++)
+    //  {
+    //    _arrFIAO[ii] = aF.FindInSorcbaseByFullName(_arrNames[ii], 0);
+    //  }
+    //}
   }
 
   public class ParAd
@@ -331,7 +354,6 @@ namespace ProgTor.ParAd
       }
       #endregion
 
-      _
     }
 
     public void Step_FindAdrObjType()
@@ -347,7 +369,7 @@ namespace ProgTor.ParAd
           {
             if (Regex.IsMatch(pa.pItem.ToString(), @"\b"+aot.pAbr+@"\b"))
             {
-              pa.pAdrObjType = aot.pCode;
+              pa.pAdrObjType = aot;
             }
           }
         }
@@ -356,11 +378,16 @@ namespace ProgTor.ParAd
 
     public void StepThree_PaItem2()
     {
-      _arrPAI2.Clear();
-
+      string param = string.Empty;
+      bool isAddSem = false;
       foreach (paItem pai in _arrPAI)
       {
-        //if ()
+        if (pai.pIsAdrObjType)
+        {
+          isAddSem = param.Length > 0;
+        }
+        //else if (pai.pIsDelim)
+
       }
     }
 

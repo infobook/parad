@@ -14,15 +14,16 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
--- Author:		<Author,,Name>
--- Create date: <Create Date,,>
--- Description:	<Description,,>
+-- Author:		M.Tor
+-- Create date: 02.12.2016
+-- Modified: 20.12.2016
+-- Description:	SELECT from ADDROBJ like param
 -- =============================================
-CREATE FUNCTION SELECT_FORMALNAME 
+CREATE FUNCTION SELECT_ADDROBJNAME 
 (	
 	-- Add the parameters for the function here
 	@fName varchar(120) 
---	,<@param2, sysname, @p2> <Data_Type_For_Param2, , char>
+--	,@p2 char
 )
 RETURNS TABLE 
 AS
@@ -37,7 +38,7 @@ RETURN
 		,CASE WHEN AO.[AOLEVEL] < 10 THEN AO.[AOLEVEL]*10 ELSE AO.[AOLEVEL] END AS [aLevel]
 
 		,AO.[SHORTNAME]  AS [aSName]
-		,AO.[FORMALNAME] AS [aFName]
+		,AO.[OFFNAME] AS [aFName]
 
 		,CAST(AO.[REGIONCODE] AS INT) AS [aRegCode] 
 		,CAST(AO.[AREACODE] AS INT) AS [aAreaCode]	
@@ -49,10 +50,10 @@ RETURN
 		[ADDROBJ] AS AO 
 		INNER JOIN
 		(SELECT AOGUID, MAX(LIVESTATUS) AS aLive, MAX(ACTSTATUS) AS aAct  
-			FROM [ADDROBJ] WHERE [FORMALNAME] LIKE @fName
+			FROM [ADDROBJ] WHERE [OFFNAME] LIKE @fName
 			GROUP BY AOGUID) AS AO2 
 		ON AO.AOGUID=AO2.AOGUID AND AO.LIVESTATUS = AO2.aLive AND AO.ACTSTATUS=AO2.aAct
 	WHERE
-		[FORMALNAME] LIKE @fName
+		[OFFNAME] LIKE @fName
 )
 GO

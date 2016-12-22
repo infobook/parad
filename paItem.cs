@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ProgTor.ParAd
 {
+ 
   /// <summary>
   /// 
   /// </summary>
@@ -56,7 +57,7 @@ namespace ProgTor.ParAd
       {
         if (pIsAdrObjType)
         {
-          return "AdrObjType = " + _aot;
+          return "AdrObjType = " + _aot.pCode;
         }
         else if (pIsInsideSlash)
         {
@@ -144,9 +145,9 @@ namespace ProgTor.ParAd
     /// </summary>
     public bool pIsAbr;
 
-    private int _aot;
+    private AdrObjType _aot;
 
-    public int pAdrObjType
+    public AdrObjType pAdrObjType
     {
       get { return _aot;  }
       set { _aot = value; }
@@ -157,7 +158,7 @@ namespace ProgTor.ParAd
     /// </summary>
     public bool pIsAdrObjType
     {
-      get { return _aot > 0; }
+      get { return _aot != null; }
     }
 
     //public bool pIsSocrBase
@@ -236,7 +237,7 @@ namespace ProgTor.ParAd
       pIsInsideSlash = false;
       pIsSkipIt = false;
       pIsAbr = false;
-      _aot = 0;
+      _aot = null;
       //pAbrCodeR = 0;
       _is1ya = false;
 

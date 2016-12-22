@@ -35,7 +35,7 @@ BEGIN
 	SET @T2 = 'T'+CAST(@pWNum AS varchar(16));
 	
 	-- Add the T-SQL statements to compute the return value here
-	SELECT @Result = ' INNER JOIN dbo.[SELECT_FORMALNAME]('''+@pWord + ''') AS '+@T2
+	SELECT @Result = ' INNER JOIN dbo.[SELECT_ADDROBJNAME]('''+@pWord + ''') AS '+@T2
 		+' ON '+@T1+'.aRegCode = '+@T2+'.aRegCode AND '+@T1+'.aLevel < '+@T2+'.aLevel'
 		+' AND dbo.FF_IS_MY_PARENT('+@T2+'.aGUID, '+@T1+'.aGUID) = 1';
 

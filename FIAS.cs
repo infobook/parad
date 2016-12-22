@@ -106,7 +106,35 @@ namespace ProgTor.ParAd
       return null;
     }
 
-    public fiAdrObj FindInRegion (String aSrc)
+    /// <summary>
+    /// Find in SOCRBASE by full name.
+    /// cLevel, cName, cSName, cCode
+    /// </summary>
+    /// <param name="aSrc"></param>
+    /// <returns></returns>
+    public fiBase FindInSorcbaseByFullName(String aSrc, short aLevelGrThen)
+    {
+      if (_socrbase.Rows.Count > 0)
+      {
+        IEnumerable<DataRow> qr = from r in _socrbase.AsEnumerable()
+               where (r.Field<short>("cLvl") > aLevelGrThen && r.Field<String>("cName").Equals(aSrc))
+               orderby r.Field<short>("cLvl")
+               select r;
+
+        if (qr.Count() > 0)
+        {
+          DataRow dr = qr.First();
+          fiBase fi = new fiBase();
+          fi.ShortNameType = dr["cSName"].ToString();
+          fi.SocrBaseCode = ParAd.ConvertToInt16Or0(dr["cCode"]);
+          fi.Level = ParAd.ConvertToInt16Or0(dr["cLvl"]);
+          return fi;
+        }
+      }
+      return null;
+    }
+
+    public fiAdrObj FindInRegion(String aSrc)
     {
       if (_reg != null && _reg.Rows.Count > 0)
       {
@@ -150,7 +178,7 @@ namespace ProgTor.ParAd
 
     public bool LoadSocrBase()
     {
-      if (_qs.SetCurrentQueryByCode(45))
+      if (_qs.SetCurrentQueryByCode(ConstParAd.QUERY_Socrbase))
       {
         _qs.SetCurrentQueryParam("OREDR_BY", String.Empty);
         if (_qs.Execute() && _qs.pResultSet.Tables.Count > 0)
@@ -179,7 +207,7 @@ namespace ProgTor.ParAd
     /// <returns>true if okay, else false</returns>
     public bool LoadRegion()
     {
-      if (_qs.SetCurrentQueryByCode(105))
+      if (_qs.SetCurrentQueryByCode(ConstParAd.QUERY_SELECT_LEVEL1))
       {
         if (_qs.Execute() && _qs.pResultSet.Tables.Count > 0)
         {
@@ -192,11 +220,21 @@ namespace ProgTor.ParAd
       return false;
     }
 
+    /// <summary>
+    /// Find address objects by set of string ...
+    /// 19.12.2016
+    /// </summary>
+    /// <param name="aAddrObjsSet"></param>
     public void FindAddrObjs(String aAddrObjsSet)
     {
-      OleDbCommand cmd = _qs.pWDB.NewOleDbCommand();
-
-      cmd.CommandType = CommandType.StoredProcedure;
+        if (_qs.SetCurrentQueryByCode(ConstParAd.QUERY_EXEC_GEN_SQL_FIND_ADDROBJ))
+        {
+            _qs.SetCurrentQueryParam("str_set", aAddrObjsSet);
+            if (_qs.Execute() && _qs.pResultSet.Tables.Count > 0)
+            {
+                _reg = _qs.pResultSet.Tables[0];
+            }
+        }
     }
  
     public int AddFiasItem(fiBase aFI)

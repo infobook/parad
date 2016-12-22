@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstParAd.cs" />
     <Compile Include="Experience.cs" />
     <Compile Include="FIAS.cs" />
     <Compile Include="fiBase.cs" />
