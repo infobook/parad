@@ -33,10 +33,10 @@ DECLARE @SQLStm varchar(2000);
 --SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('тверска€;ржев;марата');
 --SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('тверска€;ржевский;итомл€');
 --SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('тверска€;вышневолоцкий;деревково');
-SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('москва;%больша€ €киманка');
+--SET @SQLStm = dbo.GEN_SQL_FIND_ADDROBJ('москва;%больша€ €киманка');
 --PRINT @SQLStm
 --PRINT '----------------------------'
-EXEC (@SQLStm);
+--EXEC (@SQLStm);
 
 --SELECT * FROM dbo.[SELECT_FORMALNAME]('ржев')
 
@@ -45,3 +45,5 @@ SET @fName = '%€киман%'
 --SET @fName = 'ћаксима √орького'
 --SELECT * FROM dbo.SELECT_FORMALNAME(@fName)
 --SELECT * FROM ADDROBJ WHERE FORMALNAME LIKE @fName AND regioncode='77' --AND LIVESTATUS=1	
+
+SELECT SHORTNAME, COUNT(*) FROM ADDROBJ GROUP BY SHORTNAME ORDER BY 2 DESC
