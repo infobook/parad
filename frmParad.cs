@@ -43,7 +43,7 @@ namespace ProgTor.ParAd
         _txtLogs.Text += Environment.NewLine + "[" + DateTime.Now + "] " + aTxt;
 
       _txtLogs.Focus();
-      _txtLogs.Select(_txtLogs.Text.Length - 1, 0);
+      _txtLogs.Select(_txtLogs.Text.Length, 0);
       _txtLogs.ScrollToCaret();
     }
 
@@ -128,7 +128,15 @@ namespace ProgTor.ParAd
         _log("load session - " + _getFullPath(FILE_NAME_SESSION));
         _qs.pWDB.pConnectionString = _qs.pSes.DBConnection;
         if (_qs.pWDB.ConnectionOpen())
+        {
           _fias.LoadAll();
+          _log("load FIAS " + _fias.pDicSet.About());
+          //_log("load FIAS district dictionary  - " + _fias.pDicDistrict.Count + ") items");
+          //_log("load FIAS city dictionary  - " + _fias.pDicCity.Count + ") items");
+          //_log("load FIAS village [д] dictionary  - " + _fias.pDicVillage[0].Count + ") items");
+          //_log("load FIAS village [с] dictionary  - " + _fias.pDicVillage[1].Count + ") items");
+          //_log("load FIAS village [п] dictionary  - " + _fias.pDicVillage[2].Count + ") items");
+        }
         else
           _log(_qs.pError.description);
       }

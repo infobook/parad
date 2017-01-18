@@ -51,15 +51,11 @@ namespace ProgTor.ParAd
     /// <summary>
     /// Get item property
     /// </summary>
-    public String pItemProperty
+    public virtual String pItemProperty
     {
       get
       {
-        if (pIsAdrObjType)
-        {
-          return "AdrObjType = " + _aot.pCode;
-        }
-        else if (pIsInsideSlash)
+        if (pIsInsideSlash)
         {
           return "insede slash";
         }
@@ -70,10 +66,6 @@ namespace ProgTor.ParAd
         else if (pIsLetterDigit)
         {
           return "letter & digit";
-        }
-        else if (pIsIndex)
-        {
-          return "index";
         }
         else if (pIsDelim)
         {
@@ -107,19 +99,6 @@ namespace ProgTor.ParAd
       }
     }
 
-    //public String pItemFIASTitle
-    //{
-    //  get
-    //  {
-    //    if (pFiasItem == null)
-    //    {
-    //      return "null";
-    //    }
-    //    else
-    //      return pFiasItem.ToString();
-    //  }
-    //}
-    
     /// <summary>
     /// This is word - letter only!
     /// </summary>
@@ -145,30 +124,6 @@ namespace ProgTor.ParAd
     /// </summary>
     public bool pIsAbr;
 
-    private AdrObjType _aot;
-
-    public AdrObjType pAdrObjType
-    {
-      get { return _aot;  }
-      set { _aot = value; }
-    }
-
-    /// <summary>
-    /// This is address object type. As so, region,city,build and s.o.
-    /// </summary>
-    public bool pIsAdrObjType
-    {
-      get { return _aot != null; }
-    }
-
-    //public bool pIsSocrBase
-    //{
-    //  get { return pFiasItem != null && pFiasItem.SocrBaseCode > 0 ; }
-    //}
-    /// <summary>
-    /// Abridgment code from FIAS.SOCRBASE table
-    /// </summary>
-    //public int pAbrCodeR { get; set; }
 
     private Delim _delim;
 
@@ -196,28 +151,10 @@ namespace ProgTor.ParAd
     }
 
     /// <summary>
-    /// Is this item index?
-    /// </summary>
-    public bool pIsIndex
-    {
-      get { return pIsDigit && pItem.Length == 6; }
-    }
-
-    /// <summary>
     /// Is skip this word?
     /// </summary>
     public bool pIsSkipIt { get; set; }
 
-
-    //private fItem _ff;
-    /// <summary>
-    /// Reference to the FIAS item.
-    /// </summary>
-    //public fiBase pFiasItem
-    //{
-    //  get; // {return _ff; }
-    //  set;
-    //}
 
     private bool _is1ya;
 
@@ -225,6 +162,7 @@ namespace ProgTor.ParAd
     {
       get { return _is1ya; }
     }
+
 
     public paItem()
     {
@@ -237,13 +175,8 @@ namespace ProgTor.ParAd
       pIsInsideSlash = false;
       pIsSkipIt = false;
       pIsAbr = false;
-      _aot = null;
-      //pAbrCodeR = 0;
       _is1ya = false;
-
       _delim = Delim.Undefine;
-
-      //pFiasItem = null;
     }
 
     public void AppendNextLetter(char aChar)
@@ -370,38 +303,38 @@ namespace ProgTor.ParAd
       return false;
     }
   }
+  
+  //public class paItem2
+  //{
+  //  private paItem _pai;
 
-  public class paItem2
-  {
-    private paItem _pai;
+  //  public paItem pItem
+  //  {
+  //    get { return _pai; }
+  //  }
 
-    public paItem pItem
-    {
-      get { return _pai; }
-    }
+  //  /// <summary>
+  //  /// This is reference to the next item in case composite title.
+  //  /// More then one words. For examples:
+  //  /// [Парковая 16-я]
+  //  /// [Маршала Рыбалко]
+  //  /// [Северная Осетия - Алания]    
+  //  /// </summary>
+  //  public paItem2 pNextItem;
 
-    /// <summary>
-    /// This is reference to the next item in case composite title.
-    /// More then one words. For examples:
-    /// [Парковая 16-я]
-    /// [Маршала Рыбалко]
-    /// [Северная Осетия - Алания]    
-    /// </summary>
-    public paItem2 pNextItem;
+  //  public paItem2(paItem aPAI) 
+  //  {
+  //    _pai = aPAI;
+  //    pNextItem = null;
+  //  }
 
-    public paItem2(paItem aPAI) 
-    {
-      _pai = aPAI;
-      pNextItem = null;
-    }
+  //  public override string ToString()
+  //  {
+  //    if (pNextItem != null)
+  //      return _pai.ToString() + " " + pNextItem.ToString();
+  //    else
+  //      return _pai.ToString();
+  //  }
 
-    public override string ToString()
-    {
-      if (pNextItem != null)
-        return _pai.ToString() + " " + pNextItem.ToString();
-      else
-        return _pai.ToString();
-    }
-
-  }
+  //}
 }

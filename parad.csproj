@@ -56,7 +56,9 @@
     <Compile Include="frmParad.Designer.cs">
       <DependentUpon>frmParad.cs</DependentUpon>
     </Compile>
+    <Compile Include="paDic.cs" />
     <Compile Include="paItem.cs" />
+    <Compile Include="paItemAO.cs" />
     <Compile Include="ParAd.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

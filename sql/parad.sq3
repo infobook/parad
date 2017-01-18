@@ -27,7 +27,7 @@ Persist Security Info=false;</DBConnection>
   <Queries>
     <Query>
       <Code>10</Code>
-      <Name>AdrObj</Name>
+      <Name>1.test\AdrObj</Name>
       <DateCreate>2016-10-25T16:06:33.5183436+03:00</DateCreate>
       <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
@@ -196,82 +196,8 @@ ORDER BY
       </Params>
     </Query>
     <Query>
-      <Code>107</Code>
-      <Name>ADROBJ_BY_reg_level_name</Name>
-      <DateCreate>2016-11-14T17:49:42.4988337+03:00</DateCreate>
-      <DateLastModified>2016-11-30T00:00:00+03:00</DateLastModified>
-      <Hidden>false</Hidden>
-      <Author>M.Tor</Author>
-      <Note />
-      <Text>SELECT
-	[AOGUID] AS [aGUID]
-
-	,[ACTSTATUS]  AS [aStatus]
-	,[LIVESTATUS] AS [cLive]
-	,[AOLEVEL] AS [aLevel]
-
-	,[SHORTNAME]  AS [aSName]
-    ,[FORMALNAME] AS [aFName]
---    ,UPPER([FORMALNAME]) AS [cUName]
-
-     ,[REGIONCODE] AS [aRegCode] 
-     ,[AREACODE] AS [aAreaCode]	
-     ,[CITYCODE] AS [aCityCode]	
-     ,[PLACECODE] AS [aPlaceCode]	 
---	 ,[PLANCODE] AS [aPlanCode]
-     ,[STREETCODE] AS [aStreetCode]	
-
---     ,[CTARCODE]	
---     ,[EXTRCODE]	
---     ,[SEXTCODE]
-
-FROM
-	[ADDROBJ]
-WHERE
-	[FORMALNAME] LIKE '%#?Name?#%'
---	AND [AOLEVEL] in (GetLevel?#)
---	AND [REGIONCODE] = 'RegCode?#'
---ORDER BY 
---	[FORMALNAME], [LIVESTATUS] desc
-</Text>
-      <XSLT />
-      <ImageName />
-      <Params>
-        <Param>
-          <Number>2</Number>
-          <Title>Код региона</Title>
-          <Name>RegCode</Name>
-          <Type>String</Type>
-          <Inset>true</Inset>
-          <CurrentValue>77</CurrentValue>
-          <DefaultValue />
-          <SelectValue />
-        </Param>
-        <Param>
-          <Number>4</Number>
-          <Title>Уровни (3,4)</Title>
-          <Name>GetLevel</Name>
-          <Type>String</Type>
-          <Inset>true</Inset>
-          <CurrentValue>3,35,4,5,6,65,7</CurrentValue>
-          <DefaultValue />
-          <SelectValue />
-        </Param>
-        <Param>
-          <Number>6</Number>
-          <Title>Насвание</Title>
-          <Name>Name</Name>
-          <Type>String</Type>
-          <Inset>true</Inset>
-          <CurrentValue>маршала жукова</CurrentValue>
-          <DefaultValue />
-          <SelectValue />
-        </Param>
-      </Params>
-    </Query>
-    <Query>
       <Code>0</Code>
-      <Name>AdrObjNC</Name>
+      <Name>1.test\AdrObjNC</Name>
       <DateCreate>2016-10-25T16:06:33.5183436+03:00</DateCreate>
       <DateLastModified>2016-11-15T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
@@ -369,6 +295,180 @@ ORDER BY
       </Params>
     </Query>
     <Query>
+      <Code>0</Code>
+      <Name>1.test\Len FormalName in AdrObj</Name>
+      <DateCreate>2016-11-24T15:35:52.8036286+03:00</DateCreate>
+      <DateLastModified>2016-11-26T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+    LEN([FORMALNAME]) AS [cFNameLen]
+	,COUNT(*)
+FROM [ADDROBJ]
+GROUP BY LEN([FORMALNAME])</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
+    </Query>
+    <Query>
+      <Code>0</Code>
+      <Name>1.test\SELECT_FROM_ADROBJ</Name>
+      <DateCreate>2016-11-26T13:47:17.4500107+03:00</DateCreate>
+      <DateLastModified>2016-11-28T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author />
+      <Note />
+      <Text>SELECT
+	[AOGUID] AS [aGUID]
+	,[SHORTNAME]  AS [aSName]
+    ,[FORMALNAME] AS [aFName]
+    ,UCase([FORMALNAME]) AS [cUName]
+
+	,[ACTSTATUS]  AS [aStatus]
+	,[LIVESTATUS] AS [cLive]
+	,[AOLEVEL] AS [aLevel]
+	
+     ,[REGIONCODE] AS [aRegCode] 
+     ,[AREACODE] AS [aAreaCode]	
+     ,[CITYCODE] AS [aCityCode]	
+     ,[PLACECODE] AS [aPlaceCode]	 
+	 ,[PLAINCODE] AS [aPlainCode]
+     ,[STREETCODE] AS [aStreetCode]	
+
+     ,[CTARCODE]	
+     ,[EXTRCODE]	
+     ,[SEXTCODE]
+FROM 
+	[ADDROBJ]
+WHERE
+	LEN([FORMALNAME]) &lt; 4
+ORDER BY
+	[FORMALNAME]
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params />
+    </Query>
+    <Query>
+      <Code>107</Code>
+      <Name>ADROBJ_BY_reg_level_name</Name>
+      <DateCreate>2016-11-14T17:49:42.4988337+03:00</DateCreate>
+      <DateLastModified>2016-11-30T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+	[AOGUID] AS [aGUID]
+
+	,[ACTSTATUS]  AS [aStatus]
+	,[LIVESTATUS] AS [cLive]
+	,[AOLEVEL] AS [aLevel]
+
+	,[SHORTNAME]  AS [aSName]
+    ,[FORMALNAME] AS [aFName]
+--    ,UPPER([FORMALNAME]) AS [cUName]
+
+     ,[REGIONCODE] AS [aRegCode] 
+     ,[AREACODE] AS [aAreaCode]	
+     ,[CITYCODE] AS [aCityCode]	
+     ,[PLACECODE] AS [aPlaceCode]	 
+--	 ,[PLANCODE] AS [aPlanCode]
+     ,[STREETCODE] AS [aStreetCode]	
+
+--     ,[CTARCODE]	
+--     ,[EXTRCODE]	
+--     ,[SEXTCODE]
+
+FROM
+	[ADDROBJ]
+WHERE
+	[FORMALNAME] LIKE '%#?Name?#%'
+--	AND [AOLEVEL] in (GetLevel?#)
+--	AND [REGIONCODE] = 'RegCode?#'
+--ORDER BY 
+--	[FORMALNAME], [LIVESTATUS] desc
+</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>2</Number>
+          <Title>Код региона</Title>
+          <Name>RegCode</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>77</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>4</Number>
+          <Title>Уровни (3,4)</Title>
+          <Name>GetLevel</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>3,35,4,5,6,65,7</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>6</Number>
+          <Title>Насвание</Title>
+          <Name>Name</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>маршала жукова</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+      </Params>
+    </Query>
+    <Query>
+      <Code>151</Code>
+      <Name>Dictionary_ADDROBJ</Name>
+      <DateCreate>2016-12-23T13:12:00.2929136+03:00</DateCreate>
+      <DateLastModified>2016-12-23T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>SELECT
+	OFFNAME AS aName,
+--	AOLEVEL AS aLevel,
+	COUNT(*) AS aCount
+FROM 
+	ADDROBJ 
+WHERE 
+	SHORTNAME='#?AddrObjType?#'
+GROUP BY OFFNAME --, AOLEVEL 
+HAVING OFFNAME IS NOT NULL
+ORDER BY #?OrderBy?#</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>2</Number>
+          <Title>Тип объекта</Title>
+          <Name>AddrObjType</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>р-н</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>4</Number>
+          <Title>Сортировать по</Title>
+          <Name>OrderBy</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>1</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+      </Params>
+    </Query>
+    <Query>
       <Code>109</Code>
       <Name>EXEC-GEN_SQL_FIND_ADDROBJ</Name>
       <DateCreate>2016-12-16T16:12:03.0208198+03:00</DateCreate>
@@ -399,23 +499,6 @@ exec sp_executesql @SQLStm;</Text>
           <SelectValue />
         </Param>
       </Params>
-    </Query>
-    <Query>
-      <Code>0</Code>
-      <Name>Len FormalName in AdrObj</Name>
-      <DateCreate>2016-11-24T15:35:52.8036286+03:00</DateCreate>
-      <DateLastModified>2016-11-26T00:00:00+03:00</DateLastModified>
-      <Hidden>false</Hidden>
-      <Author>M.Tor</Author>
-      <Note />
-      <Text>SELECT
-    LEN([FORMALNAME]) AS [cFNameLen]
-	,COUNT(*)
-FROM [ADDROBJ]
-GROUP BY LEN([FORMALNAME])</Text>
-      <XSLT />
-      <ImageName />
-      <Params />
     </Query>
     <Query>
       <Code>113</Code>
@@ -463,49 +546,10 @@ WHERE
       </Params>
     </Query>
     <Query>
-      <Code>0</Code>
-      <Name>SELECT_FROM_ADROBJ</Name>
-      <DateCreate>2016-11-26T13:47:17.4500107+03:00</DateCreate>
-      <DateLastModified>2016-11-28T00:00:00+03:00</DateLastModified>
-      <Hidden>false</Hidden>
-      <Author />
-      <Note />
-      <Text>SELECT
-	[AOGUID] AS [aGUID]
-	,[SHORTNAME]  AS [aSName]
-    ,[FORMALNAME] AS [aFName]
-    ,UCase([FORMALNAME]) AS [cUName]
-
-	,[ACTSTATUS]  AS [aStatus]
-	,[LIVESTATUS] AS [cLive]
-	,[AOLEVEL] AS [aLevel]
-	
-     ,[REGIONCODE] AS [aRegCode] 
-     ,[AREACODE] AS [aAreaCode]	
-     ,[CITYCODE] AS [aCityCode]	
-     ,[PLACECODE] AS [aPlaceCode]	 
-	 ,[PLAINCODE] AS [aPlainCode]
-     ,[STREETCODE] AS [aStreetCode]	
-
-     ,[CTARCODE]	
-     ,[EXTRCODE]	
-     ,[SEXTCODE]
-FROM 
-	[ADDROBJ]
-WHERE
-	LEN([FORMALNAME]) &lt; 4
-ORDER BY
-	[FORMALNAME]
-</Text>
-      <XSLT />
-      <ImageName />
-      <Params />
-    </Query>
-    <Query>
       <Code>105</Code>
       <Name>SELECT_LEVEL1</Name>
       <DateCreate>2016-10-25T16:06:43.0734085+03:00</DateCreate>
-      <DateLastModified>2016-11-26T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-12-23T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
@@ -515,7 +559,8 @@ SELECT
 	,[REGIONCODE] AS [cRegCode]
 	,[SHORTNAME]  AS [cSName]
     ,[FORMALNAME] AS [cFName]
-    ,UCase([FORMALNAME]) AS [cUName]
+--    ,UCase([FORMALNAME]) AS [cUName]
+    ,UPPER([FORMALNAME]) AS [cUName]
 	,[ACTSTATUS] AS [cStatus]
 	,[LIVESTATUS] AS [cLive]
 	,[AOLEVEL] AS [cLevel]
@@ -535,18 +580,20 @@ ORDER BY
       <Code>45</Code>
       <Name>Socrbase</Name>
       <DateCreate>2016-11-03T13:43:20.9161679+03:00</DateCreate>
-      <DateLastModified>2016-11-25T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2016-12-23T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
       <Text>
 
 SELECT 
-	CInt([LEVEL]) AS [cLvl]
+--	CInt([LEVEL]) AS [cLvl]
+	CAST([LEVEL] AS int) AS [cLvl]
 	, SCNAME AS [cSName]
 	, SOCRNAME AS [cName]
 	, [LEVEL] AS [cLevel]
-	, CInt(KOD_T_ST) AS [cCode]
+--	, CInt(KOD_T_ST) AS [cCode]
+	, CAST(KOD_T_ST AS int) AS [cCode]
 	, '' AS cSName2
 FROM 
 	SOCRBASE

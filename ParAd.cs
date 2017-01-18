@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -68,11 +67,11 @@ namespace ProgTor.ParAd
 
   public class ParAd
   {
-    private ArrayList _arrAOT;
+    private List<AdrObjType> _arrAOT;
 
     private String _src;
-    private ArrayList _arrPAI;
-    private ArrayList _arrPAI2;
+    private List<paItemAO> _arrPAI;
+    private List<SetPAIAO> _arrSPAI;
 
     private FIAS _fias;
     private Experience _exp;
@@ -89,46 +88,46 @@ namespace ProgTor.ParAd
       }
     }
 
-    public ArrayList pArrAOT
+    public List<AdrObjType> pArrAOT
     {
       get { return _arrAOT; }
     }
 
-    public ArrayList pArrPaItems
+    public List<paItemAO> pArrPaItems
     {
       get { return _arrPAI; }
     }
 
-    public ArrayList pArrPaItems2
-    {
-      get { return _arrPAI2; }
-    }
+    //public ArrayList pArrPaItems2
+    //{
+    //  get { return _arrPAI2; }
+    //}
 
     public ParAd(FIAS aFIAS, Experience aExp)
     {
       _fias = aFIAS;
       _exp = aExp;
-      _arrAOT = new ArrayList();
-      _arrPAI = new ArrayList();
-      _arrPAI2 = new ArrayList();
+      _arrAOT = new List<AdrObjType>();
+      _arrPAI = new List<paItemAO>();
+      _arrSPAI = new List<SetPAIAO>();
     }
 
-    private paItem _addDelimAndNextPAItem(paItem aPAI, paItem.Delim aDelim)
+    private paItemAO _addDelimAndNextPAItem(paItemAO aPAI, paItem.Delim aDelim)
     {
       aPAI = _addPAItem(aPAI);
 
       aPAI.pDelim = aDelim;
       _arrPAI.Add(aPAI);
-      return new paItem();
+      return new paItemAO();
     }
 
-    private paItem _addPAItem(paItem aPAI)
+    private paItemAO _addPAItem(paItemAO aPAI)
     {
       if (!aPAI.pIsEmpty)
       {
         aPAI.CheckForm_1aya();
         _arrPAI.Add(aPAI);
-        aPAI = new paItem();
+        aPAI = new paItemAO();
       }
 
       return aPAI;
@@ -192,7 +191,7 @@ namespace ProgTor.ParAd
     {
       StepOne_Characters();
 
-      foreach (paItem pa in _arrPAI)
+      foreach (paItemAO pa in _arrPAI)
       {
         if (pa.pIsWord)
         {
@@ -229,7 +228,7 @@ namespace ProgTor.ParAd
 
       wsb = _replaceLat2Cyr(wsb);
 
-      paItem pa = new paItem();
+      paItemAO pa = new paItemAO();
 
       _arrPAI.Clear();
 
@@ -242,13 +241,13 @@ namespace ProgTor.ParAd
           /// "г. Москва" - space skip
           /// "д. 10, кв. 11" -spaces skip
           /// "one      tow" - skip more then one space
-          if (_arrPAI.Count > 0 && ((paItem)_arrPAI[_arrPAI.Count-1]).pIsDelim)
+          if (_arrPAI.Count > 0 && ((paItemAO)_arrPAI[_arrPAI.Count-1]).pIsDelim)
           //if (pa.pIsDelim)
             continue;  // if previous is whitespace skip this
 
           pa.pDelim = paItem.Delim.WhiteSpase;
           _arrPAI.Add(pa);
-          pa = new paItem();
+          pa = new paItemAO();
         }
         else if (wsb[ii] == '.')
         {
@@ -304,61 +303,37 @@ namespace ProgTor.ParAd
 
     public void StepTwo_FIAS()
     {
-      //short lvl = 0;
-      //short code = 0;
       _fias.Clear();
 
-      //foreach (paItem pa in _arrPAI)
-      //{
-      //  if (pa.pIsSkipIt)
-      //    continue;
-
-      //  if (pa.pIsWord)
-      //  {
-      //    fiBase fi = _fias.FindInSorcbase(pa.pItem.ToString(), lvl);
-      //    if (fi != null)
-      //    {
-      //      //pa.pFiasItem = fi;
-      //      fi.pPAISrc = pa;
-      //      _fias.AddFiasItem(fi);
-      //      lvl = fi.Level;
-      //    }
-      //  }
-      //}
-
-      #region search region
+      fiAdrObj fi = null;
+      foreach (paItemAO pa in _arrPAI)
       {
-        fiAdrObj fi = null;
-        foreach (paItem pa in _arrPAI)
-        {
-          if (pa.pIsSkipIt)
-            continue;
+        if (pa.pIsSkipIt)
+          continue;
 
-          if (pa.pIsWord)
+        if (pa.pIsWord)
+        {
+          fi = _fias.FindInRegion(pa.pItem.ToString());
+          if (fi != null)
           {
-            fi = _fias.FindInRegion(pa.pItem.ToString());
-            if (fi != null)
-            {
-              //pa.pFiasItem = fi;
-              fi.pPAISrc = pa;
-              _fias.AddFiasItem(fi);
-              break;
-            }
+            //pa.pFiasItem = fi;
+            fi.pPAISrc = pa;
+            _fias.AddFiasItem(fi);
+            break;
           }
         }
-
-        if (fi == null)
-        {
-          // region not found !!!
-        }
       }
-      #endregion
+
+      if (fi == null)
+      {
+        // region not found !!!
+      }
 
     }
 
     public void Step_FindAdrObjType()
     {
-      foreach (paItem pa in _arrPAI)
+      foreach (paItemAO pa in _arrPAI)
       {
         if (pa.pIsSkipIt)
           continue;
@@ -376,19 +351,102 @@ namespace ProgTor.ParAd
       }
     }
 
-    public void StepThree_PaItem2()
-    {
-      string param = string.Empty;
-      bool isAddSem = false;
-      foreach (paItem pai in _arrPAI)
-      {
-        if (pai.pIsAdrObjType)
-        {
-          isAddSem = param.Length > 0;
-        }
-        //else if (pai.pIsDelim)
+    //public void StepThree_PaItem2()
+    //{
+    //  string param = string.Empty;
+    //  bool isAddSem = false;
+    //  foreach (paItemAO pai in _arrPAI)
+    //  {
+    //    if (pai.pIsAdrObjType)
+    //    {
+    //      isAddSem = param.Length > 0;
+    //    }
+    //    //else if (pai.pIsDelim)
 
+    //  }
+    //}
+
+
+    /// <summary>
+    /// Разбераем адресную строку, точнее набор элементов по словарю!
+    /// M.Tor
+    /// 18.01.2017
+    /// </summary>
+    public void W_StepFour_PaItemInDictionary()
+    {
+      /// ищем с конца разбираемой строки или до первого сокращения
+      /// типа адресного объекта "д" (дом) или до первого слова более 3 символов,
+      /// предпологая, что сокращение пропущено, и до первого элемента
+      bool isEndAO = false;
+      List<paItemAO> rwa = new List<paItemAO>();
+      for(int ii = _arrPAI.Count-1; ii >= 0; ii--)
+      {
+        if (isEndAO)
+        {
+          if (_arrPAI[ii].pIsMayBeAO)
+            rwa.Add(_arrPAI[ii]);
+        }
+        else
+        {
+          if (_arrPAI[ii].pIsAdrObjTypeHouse)
+          {
+            isEndAO = true;
+          }
+          else if (!_arrPAI[ii].pIsAdrObjType && _arrPAI[ii].pIsWord && _arrPAI[ii].pItemTitle.Length > 3)
+          {
+            isEndAO = true;
+            rwa.Add(_arrPAI[ii]);
+          }
+        }
       }
+
+      if (rwa.Count == 0)
+        return;
+
+      // перевернем rwa --> wa
+      List<paItemAO> wa = new List<paItemAO>();
+      for (int ii = rwa.Count - 1; ii >= 0; ii--)
+        wa.Add(rwa[ii]);
+
+      int offset = 0;
+      int fini;
+      paDic dic = _fias.pDicSet.GetFirst();
+      while (offset < wa.Count)
+      {
+        fini = wa.Count;
+        SetPAIAO spai = null;
+        while (fini > offset)
+        {
+          // набираем строку:
+          StringBuilder sbf = wa[offset].pItem;
+          for (int ii = offset+1; ii < fini; ii++)
+            sbf.Append(" ").Append(wa[ii].pItem);
+          // проверяем есть ли она в словаре?
+          if (dic.pIsContains(sbf.ToString()))
+          {
+            /// ДА:
+            /// смещаемся
+            offset = fini;
+            /// создаем набор элементов
+            spai = new SetPAIAO();
+            spai.pDic = dic;
+            for (int ii = offset + 1; ii < fini; ii++)
+              spai.Add(wa[ii]);
+            /// и добавляем его в массив
+            _arrSPAI.Add(spai);
+          }
+          else
+          {
+            /// если НЕТ: уменьшаем длину
+            fini--;
+          }
+        }
+        /// берем следующий словарь:
+        dic = _fias.pDicSet.GetNext();
+        if (dic == null)
+          break;
+      }
+
     }
 
 
