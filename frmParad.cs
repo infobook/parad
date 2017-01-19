@@ -194,6 +194,17 @@ namespace ProgTor.ParAd
 
         _log("\t in array _pa count = " + _pa.pArrPaItems.Count);
 
+        foreach (SetPAIAO spa in _pa.pArrSetPAIAO)
+          _log("\t" +spa.ToString());
+
+
+        if (_pa.pResult != null)
+        {
+          _dgvTgtS2.DataSource = _pa.pResult;
+
+        }
+
+
         BindingSource bs = new BindingSource();
         bs.DataSource = _pa.pArrPaItems;
         _dgvTgtS1.DataSource = bs;

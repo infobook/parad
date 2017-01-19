@@ -428,11 +428,12 @@ WHERE
       <Code>151</Code>
       <Name>Dictionary_ADDROBJ</Name>
       <DateCreate>2016-12-23T13:12:00.2929136+03:00</DateCreate>
-      <DateLastModified>2016-12-23T00:00:00+03:00</DateLastModified>
+      <DateLastModified>2017-01-19T00:00:00+03:00</DateLastModified>
       <Hidden>false</Hidden>
       <Author>M.Tor</Author>
       <Note />
-      <Text>SELECT
+      <Text>
+SELECT
 	OFFNAME AS aName,
 --	AOLEVEL AS aLevel,
 	COUNT(*) AS aCount
@@ -458,6 +459,51 @@ ORDER BY #?OrderBy?#</Text>
         </Param>
         <Param>
           <Number>4</Number>
+          <Title>Сортировать по</Title>
+          <Name>OrderBy</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>1</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+      </Params>
+    </Query>
+    <Query>
+      <Code>153</Code>
+      <Name>Dictionary_ADDROBJ_Lvl</Name>
+      <DateCreate>2017-01-19T10:55:48.3865865+03:00</DateCreate>
+      <DateLastModified>2017-01-19T00:00:00+03:00</DateLastModified>
+      <Hidden>false</Hidden>
+      <Author>M.Tor</Author>
+      <Note />
+      <Text>
+SELECT 
+	OFFNAME AS aName,
+	COUNT(*) AS aCount
+FROM 
+	ADDROBJ 
+WHERE 
+	AOLEVEL = #?Lvl?# 
+GROUP BY 
+	OFFNAME
+HAVING OFFNAME IS NOT NULL
+ORDER BY #?OrderBy?#</Text>
+      <XSLT />
+      <ImageName />
+      <Params>
+        <Param>
+          <Number>3</Number>
+          <Title>Level</Title>
+          <Name>Lvl</Name>
+          <Type>String</Type>
+          <Inset>true</Inset>
+          <CurrentValue>7</CurrentValue>
+          <DefaultValue />
+          <SelectValue />
+        </Param>
+        <Param>
+          <Number>5</Number>
           <Title>Сортировать по</Title>
           <Name>OrderBy</Name>
           <Type>String</Type>

@@ -19,9 +19,9 @@ namespace ProgTor.ParAd
       get { return _dic; }
     }
 
-    public bool pIsContains(String aKey)
+    public bool pIsContainsUp(String aKey)
     {
-      return _dic.ContainsKey(aKey);
+      return _dic.ContainsKey(aKey.ToUpper());
     }
 
     public string pAbr;

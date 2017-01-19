@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Data;
 using CommandAS.Tools;
 using CommandAS.QueryLib;
 
@@ -98,10 +99,12 @@ namespace ProgTor.ParAd
       get { return _arrPAI; }
     }
 
-    //public ArrayList pArrPaItems2
-    //{
-    //  get { return _arrPAI2; }
-    //}
+    public List<SetPAIAO> pArrSetPAIAO
+    {
+      get { return _arrSPAI; }
+    }
+
+    public DataTable pResult;
 
     public ParAd(FIAS aFIAS, Experience aExp)
     {
@@ -110,6 +113,7 @@ namespace ProgTor.ParAd
       _arrAOT = new List<AdrObjType>();
       _arrPAI = new List<paItemAO>();
       _arrSPAI = new List<SetPAIAO>();
+      pResult = null;
     }
 
     private paItemAO _addDelimAndNextPAItem(paItemAO aPAI, paItem.Delim aDelim)
@@ -189,6 +193,8 @@ namespace ProgTor.ParAd
 
     public void Run()
     {
+      pResult = null;
+
       StepOne_Characters();
 
       foreach (paItemAO pa in _arrPAI)
@@ -220,7 +226,24 @@ namespace ProgTor.ParAd
       Step_FindAdrObjType();
 
       StepTwo_FIAS();
+
+      W_StepFour_PaItemInDictionary();
+
+      if (_arrSPAI.Count > 0)
+      {
+        StringBuilder aos = new StringBuilder(_arrSPAI[0].pItemTitle);
+        for (int ii = 1; ii < _arrSPAI.Count; ii++)
+          aos.Append(";").Append(_arrSPAI[ii].pItemTitle);
+
+        pResult = _fias.FindAddrObjs(aos.ToString());
+      }
     }
+
+    //public void Clear()
+    //{
+    //  _arrPAI.Clear();
+    //  _arrSPAI.Clear();
+    //}
 
     public void StepOne_Characters()
     {
@@ -231,6 +254,7 @@ namespace ProgTor.ParAd
       paItemAO pa = new paItemAO();
 
       _arrPAI.Clear();
+      _arrSPAI.Clear();
 
       for (int ii = 0; ii < wsb.Length; ii++)
       {
@@ -383,7 +407,7 @@ namespace ProgTor.ParAd
       {
         if (isEndAO)
         {
-          if (_arrPAI[ii].pIsMayBeAO)
+          if (!_arrPAI[ii].pIsAdrObjType && _arrPAI[ii].pIsMayBeAO)
             rwa.Add(_arrPAI[ii]);
         }
         else
@@ -418,22 +442,22 @@ namespace ProgTor.ParAd
         while (fini > offset)
         {
           // набираем строку:
-          StringBuilder sbf = wa[offset].pItem;
+          StringBuilder sbf = new StringBuilder(wa[offset].pItem.ToString());
           for (int ii = offset+1; ii < fini; ii++)
             sbf.Append(" ").Append(wa[ii].pItem);
           // проверяем есть ли она в словаре?
-          if (dic.pIsContains(sbf.ToString()))
+          if (dic.pIsContainsUp(sbf.ToString()))
           {
             /// ДА:
-            /// смещаемся
-            offset = fini;
             /// создаем набор элементов
             spai = new SetPAIAO();
             spai.pDic = dic;
-            for (int ii = offset + 1; ii < fini; ii++)
+            for (int ii = offset; ii < fini; ii++)
               spai.Add(wa[ii]);
-            /// и добавляем его в массив
+            /// добавляем его в массив
             _arrSPAI.Add(spai);
+            /// и смещаемся
+            offset = fini;
           }
           else
           {

@@ -115,17 +115,19 @@ namespace ProgTor.ParAd
     {
       get
       {
-        StringBuilder ret = new StringBuilder();
-        foreach (paItemAO pai in _arrPAI)
+        if (_arrPAI.Count > 0)
         {
-          if (ret.Length > 0)
-         {
-           ret.Append(" ");
-          }
-          ret.Append(pai.pItemTitle);
+          StringBuilder ret = new StringBuilder(_arrPAI[0].pItemTitle);
+          for (int ii = 1; ii < _arrPAI.Count; ii++ )
+            ret.Append(" ").Append(_arrPAI[ii].pItemTitle);
+
+          return ret.ToString();
+        }
+        else
+        {
+          return string.Empty;
         }
 
-        return ret.ToString();
       }
     }
 
@@ -149,6 +151,15 @@ namespace ProgTor.ParAd
       }
     }
 
+    public override string ToString()
+    {
+      if (pDic != null)
+        return "dic[" + pDic.pAbr + "/" + pDic.pLevel + "] " + pItemTitle;
+      else if (pPAIAOType != null && pPAIAOType.pAdrObjType != null)
+        return pPAIAOType.pAdrObjType.pAbr + " " + pItemTitle;
+      else
+        return pItemTitle;
+    }
   }
 
 }

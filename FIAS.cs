@@ -228,7 +228,8 @@ namespace ProgTor.ParAd
       if (!LoadRegion())
         return false;
 
-      LoadDictionaries();
+      //LoadDictionaries();
+      LoadDictionaries2();
 
 
       _qs.pWDB.ConnectionClose();
@@ -308,7 +309,6 @@ namespace ProgTor.ParAd
 
       }
     }
-
     private void _fillDic(paDic aDic)
     {
       _qs.SetCurrentQueryParam("AddrObjType", aDic.pAbr);
@@ -320,24 +320,56 @@ namespace ProgTor.ParAd
           aDic.pDic.Add(dr["aName"].ToString().ToUpper(), ii++);
         }
       }
-
     }
+
+    /// <summary>
+    /// Load all dictionaries from ADDROBJ table by level.
+    /// 19.01.2017
+    /// </summary>
+    public void LoadDictionaries2()
+    {
+      if (_qs.SetCurrentQueryByCode(ConstParAd.QUERY_DIC_ADDROBJ_LVL))
+      {
+        _qs.SetCurrentQueryParam("OrderBy", "1");
+        _fillDic2(_dics.AddNewDic("р-н",3));
+        _fillDic2(_dics.AddNewDic("г", 4));
+        _fillDic2(_dics.AddNewDic("д/с/п", 6));
+        _fillDic2(_dics.AddNewDic("ул", 7));
+
+      }
+    }
+    private void _fillDic2(paDic aDic)
+    {
+      _qs.SetCurrentQueryParam("Lvl", aDic.pLevel.ToString());
+      if (_qs.Execute() && _qs.pResultSet.Tables.Count > 0)
+      {
+        int ii = 1;
+        foreach (DataRow dr in _qs.pResultSet.Tables[0].Rows)
+        {
+          aDic.pDic.Add(dr["aName"].ToString().ToUpper(), ii++);
+        }
+      }
+    }
+
 
     /// <summary>
     /// Find address objects by set of string ...
     /// 19.12.2016
     /// </summary>
     /// <param name="aAddrObjsSet"></param>
-    public void FindAddrObjs(String aAddrObjsSet)
+    public DataTable FindAddrObjs(String aAddrObjsSet)
     {
+      DataTable res = null;
       if (_qs.SetCurrentQueryByCode(ConstParAd.QUERY_EXEC_GEN_SQL_FIND_ADDROBJ))
       {
         _qs.SetCurrentQueryParam("str_set", aAddrObjsSet);
         if (_qs.Execute() && _qs.pResultSet.Tables.Count > 0)
         {
-          _reg = _qs.pResultSet.Tables[0];
+          res = _qs.pResultSet.Tables[0];
         }
       }
+
+      return res;
     }
 
     public int AddFiasItem(fiBase aFI)
